@@ -1,5 +1,6 @@
 import React,{ Component } from 'react';
 import Navbar from './Navbar';
+import Pagination from './Pagination';
 import './Navbar.css';
 import './Project.css';
 
@@ -41,7 +42,7 @@ class Project extends Component{
 	}
 
 	componentDidMount(){
-		let likeMatch = db.collection("like").where("title", "==", this.props.title).get()
+		db.collection("like").where("title", "==", this.props.title).get()
 		.then((querySnapshot) =>{
 			if(querySnapshot.size === 0){
 				this.setState({like: false});
@@ -105,26 +106,42 @@ class Project extends Component{
 class Projects extends Component{//prop 給collection名稱
 	constructor(){
 		super();
-		this.state = {testArr: [],data: "fc_keyTech"};
+		this.state = {testArr: [],data: "fc_keyTech",page: 1, totalPage: 1};
 		this.whichData = this.whichData.bind(this);
 	}
 
 	componentDidMount(){
 		console.log("in componentDidMount")
-		db.collection(this.state.data).orderBy("date", "desc").limit(10).get().then((querySnapshot) => {
-			querySnapshot.forEach((doc) => {
+		//var next;
+		db.collection(this.state.data).orderBy("date", "desc").get().then((querySnapshot) => {
+			/*let lastNews = querySnapshot.docs[querySnapshot.docs.length-1];
+			console.log(lastNews.data().title);
+			next = db.collection(this.state.data).orderBy("date", "desc").startAfter(lastNews).limit(12)*/
+			this.setState({ totalPage: Math.ceil(querySnapshot.docs.length/12) });	//calculate total Page nember
+			
+			for(let i=0;i<12;i++){
+				let doc = querySnapshot.docs[i];
+				this.setState(state => {
+    				//不能用push https://www.robinwieruch.de/react-state-array-add-update-remove
+    				const testArr = this.state.testArr.concat({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date});
+    				return {testArr};
+    			})
+			}
+			/*querySnapshot.forEach((doc) => {
     			this.setState(state => {
     				//不能用push https://www.robinwieruch.de/react-state-array-add-update-remove
     				const testArr = this.state.testArr.concat({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date});
     				return {testArr};
     			})
-			})
+			})*/
     	})
-	}
+    }
 
 	componentDidUpdate(prevProps, prevState){
+		
 		if(this.state.data !== prevState.data){
-			db.collection(this.state.data).orderBy("date", "desc").limit(10).get().then((querySnapshot) => {
+			
+			db.collection(this.state.data).orderBy("date", "desc").limit(12).get().then((querySnapshot) => {
 				querySnapshot.forEach((doc) => {
     				this.setState(state => {
     					//不能用push https://www.robinwieruch.de/react-state-array-add-update-remove
@@ -134,13 +151,50 @@ class Projects extends Component{//prop 給collection名稱
 				})
     		})
 		}
+		else if(this.state.page !== prevState.page){
+			console.log('in change page');
+			let lastNews, nextPage;
+			if(this.state.page !== 1){
+				db.collection(this.state.data).orderBy("date", "desc").limit(12 * (this.state.page-1)).get().then((querySnapshot) => {
+					lastNews = querySnapshot.docs[querySnapshot.docs.length-1];
+					nextPage = db.collection(this.state.data).orderBy("date", "desc").startAfter(lastNews).limit(12);
+				})
+				.then(() =>{
+    				nextPage.get().then((querySnapshot) => {
+    					querySnapshot.forEach((doc) => {
+    						this.setState(state => {
+    							//不能用push https://www.robinwieruch.de/react-state-array-add-update-remove
+   								const testArr = this.state.testArr.concat({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date});
+   								return {testArr};
+   							})				
+    					})
+    				})
+    			})
+			}
+			else{	//this.state.page = 1
+				db.collection(this.state.data).orderBy("date", "desc").limit(12).get().then((querySnapshot) => {
+					querySnapshot.forEach((doc) => {
+    					this.setState(state => {
+    						//不能用push https://www.robinwieruch.de/react-state-array-add-update-remove
+   							const testArr = this.state.testArr.concat({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date});
+   							return {testArr};
+   						})				
+    				})
+    			})
+			}
+		}
 	}
 
 
 	whichData(evt){
 		console.log("click",evt.target.textContent);
-		if(this.state.data !== evt.target.textContent){
-			this.setState({testArr: [], data: evt.target.textContent});
+		
+		if((isNaN(evt.target.textContent)) && (this.state.data !== evt.target.textContent)){		//change page between like | history | home
+			this.setState({testArr: [], data: evt.target.textContent, page: 1, totalPage: 1});
+		}
+		else if(this.state.page != evt.target.textContent){	//change page number
+			console.log('in setState page');
+			this.setState({testArr: [], page: parseInt(evt.target.textContent)});
 		}
 	}
 
@@ -154,23 +208,25 @@ class Projects extends Component{//prop 給collection名稱
 						{	
 							this.state.testArr.map((doc) => {				
     							return(
-									<Project cardId={doc.id} image={doc.image} title={doc.title} href={doc.href} date={doc.date}/>
+									<Project key={doc.id} cardId={doc.id} image={doc.image} title={doc.title} href={doc.href} date={doc.date}/>
     							)
     						})	
 						}
+						
 					</div>
+					<Pagination pageNum={this.state.totalPage} whichData={this.whichData}/>
 				</div>
 			)
 		}
 		else{
 			return( 
 				<div>
-				<Navbar whichData={this.whichData}/>
-				<div>Loading</div>
+					<Navbar whichData={this.whichData}/>
+					<div>Loading</div>
 				</div>
 			)
 		}
-	}
+	}//end of render()
 }
 
 export default Projects;

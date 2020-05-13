@@ -41,7 +41,7 @@ exports.fc_scrapyNew_test = async (req, res) => {
   let addNews = [];
   let addNews_startIndex = 0;
   //get last 1 news
-  await db.collection('fc_businessModel').orderBy('date', 'desc').limit(1).get()
+  await db.collection('all_news').where('data_src', '==', 'fc_businessModel').orderBy('date', 'desc').limit(1).get()
   .then((snapshot) => {
     snapshot.forEach((doc) => {
       lastestNews = doc.data();
@@ -106,37 +106,24 @@ exports.fc_scrapyNew_test = async (req, res) => {
       //next 4 big post
       if(!nothingNew){
       let newIndex = [];
-      /*await $('.td_module_mx6 .td-meta-info-container h3.entry-title').each((index,element)=>{
-          if(lastestNews.title != $(element).text()){
-            addNews.push({
-              date:'',
-       		    href:'',
-              image:'',
-              title:''
-            });
-            console.log($(element).text());          //scrapy title
-            addNews[addNews_startIndex + index].title = $(element).text();
-            newIndex.push(index);
-            htmlHead =  htmlHead + '<div>' + $(element).text() + '</div>';
-            scrapyNum = scrapyNum + 1;
-          }
-          else{
-            nothingNew = true;
-          }
-      });*/
+    
       for (let i = 0;i < 4;i = i+1){
-         let element =await $('.td_module_mx6 .td-meta-info-container h3.entry-title')[i];
-         if(lastestNews.title != $(element).text()){
+         //let element =await $('.td_module_mx6 .td-meta-info-container h3.entry-title')[i];
+         let element = await $('.td_module_mx6 .td-module-thumb > a')[i];
+         //if(lastestNews.title != $(element).text()){
+         if(lastestNews.href != $(element).attr('href')){
             addNews.push({
               date:'',
        		    href:'',
               image:'',
               title:''
             });
-            console.log($(element).text());          //scrapy title
-            addNews[addNews_startIndex + i].title = $(element).text();
+            
+            //scrapy title
+            //console.log($($('.td_module_mx6 .td-meta-info-container h3.entry-title a')[i]).text())
+            addNews[addNews_startIndex + i].title = $($('.td_module_mx6 .td-meta-info-container h3.entry-title a')[i]).text();
             newIndex.push(i);
-            htmlHead =  htmlHead + '<div>' + $(element).text() + '</div>';
+            htmlHead =  htmlHead + '<div>' + addNews[addNews_startIndex + i].title + '</div>';
             scrapyNum = scrapyNum + 1;
           }
           else{
@@ -151,6 +138,7 @@ exports.fc_scrapyNew_test = async (req, res) => {
           for(const index of newIndex){
             //get post url
             if(i == index){
+              console.log(addNews[addNews_startIndex + i].title);
               fourPost_url.push($(elem).attr('href'));
               addNews[addNews_startIndex + i].href = $(elem).attr('href');
               htmlHead = htmlHead + '<a href = \"' + $(elem).attr('href') + '\">' + $(elem).attr('href') + '</a>'; 
@@ -182,15 +170,6 @@ exports.fc_scrapyNew_test = async (req, res) => {
       addNews_startIndex = 5;
       }
 
-      //write into firestore
-      /*await addNews.forEach(element =>{
-    	    db.collection('fc_test').add({
-       	    date: admin.firestore.Timestamp.fromDate(new Date(element.date)),
-            href: element.href,
-            image: element.image,
-            title: element.title
-          });
-      })*/
       /////////////////////////////scrapy typical post///////////////////////////////////////////
       await page.goto(url);
       body = await page.content()
@@ -216,12 +195,11 @@ exports.fc_scrapyNew_test = async (req, res) => {
           $ = await cheerio.load(body)
         }
 
-        await $('.td-block-span6 h3.entry-title.td-module-title > a').each((i,elem)=>{   //scrape url
-        	  //console.log($(elem).attr('href'));
-            if(lastestNews.href != $(elem).attr('href')){
-              tmpNews.href = $(elem).attr('href');
-        	    //htmlHead = htmlHead + '<a href = \"' + $(elem).attr('href') + '\">' + $(elem).attr('href') + '</a>';
+        for(let i=0;i < $('.td-block-span6 h3.entry-title.td-module-title > a').length; i=i+1){
+            console.log($('.td-block-span6 h3.entry-title.td-module-title > a')[i].attribs.href)
+            if(lastestNews.href != $('.td-block-span6 h3.entry-title.td-module-title > a')[i].attribs.href){
 
+              tmpNews.href = $('.td-block-span6 h3.entry-title.td-module-title > a')[i].attribs.href;
               tmpNews.title = $($('.td-block-span6 h3.entry-title.td-module-title')[i]).text();
               tmpNews.image = $($('.td-block-span6 a.td-image-wrap img')[i]).attr('src');//maybe change to srcset to scrapy bigger pic
               tmpNews.date = $($('.td-block-span6 span.td-post-date > time.entry-date.updated.td-module-date')[i]).attr('datetime');
@@ -237,44 +215,29 @@ exports.fc_scrapyNew_test = async (req, res) => {
                 image: tmpNews.image,
                 title: tmpNews.title
               })
-            
+
+              scrapyNum = scrapyNum + 1;
             }
             else{
-              //break;
               tmpPage = lastPage;
-            }
-        });
-
-    	  /*await $('.td-block-span6 h3.entry-title.td-module-title').each((i,elem)=>{        //scrape title
-        	  //console.log($(elem).text());
-            allNews.push({
-              date:'',
-       		    href:'',
-              image:'',
-              title:''
-            });
-            allNews[i].title = $(elem).text();
-        	htmlHead =  htmlHead + '<div>' + $(elem).text() + '</div>';
-    	    newsNum = newsNum + 1;
-        });
-      
-        await $('.td-block-span6 a.td-image-wrap img').each((i,elem)=>{                   //scrape image
-        	  //console.log($(elem).attr('src'));
-            allNews[i].image = $(elem).attr('src');
-        	htmlHead = htmlHead + '<img src = \"' + $(elem).attr('src') + '\">';
-        });
-      
-        
-
-        await $('.td-block-span6 span.td-post-date > time.entry-date.updated.td-module-date').each((i,elem)=>{
-        	  //console.log($(elem).attr('datetime'));
-            //allNews[i].date = $(elem).text();
-            allNews[i].date = $(elem).attr('datetime');
-        	htmlHead =  htmlHead + '<div>' + $(elem).text() + '</div>';
-    	  });*/
+              break;
+            }  
+        }
 
         tmpPage = tmpPage + 1;
       }
+
+      //write into firestore
+      await addNews.forEach(element =>{
+    	    db.collection('all_news').add({
+       	    date: admin.firestore.Timestamp.fromDate(new Date(element.date)),
+            href: element.href,
+            image: element.image,
+            title: element.title,
+            data_src: 'fc_businessModel'
+          });
+      })
+
       await browser.close();
       await res.write(htmlHead + htmlTail);////////////////////////
       await res.end();//////////////////////////
@@ -285,6 +248,6 @@ exports.fc_scrapyNew_test = async (req, res) => {
 
   /*await res.write(htmlHead + htmlTail);
   await res.end();*/
-  await res.status(200).send('good');
+  //await res.status(200).send('good');
 };
 

@@ -29,7 +29,7 @@ exports.fc_scrapyNew_test = async (req, res) => {
   let htmlTail = '</body></html>';
   //await res.writeHead(200, {'Content-Type':'text/html;charset=utf-8'});
   
-  let url = 'https://fc.bnext.com.tw/category/%e5%95%86%e6%a5%ad%e6%a8%a1%e5%bc%8f/';
+  let url = 'https://fc.bnext.com.tw/category/business-model/';
   let lastestNews = {
       date:'',
       href:'',
@@ -171,60 +171,63 @@ exports.fc_scrapyNew_test = async (req, res) => {
       }
 
       /////////////////////////////scrapy typical post///////////////////////////////////////////
-      await page.goto(url);
-      body = await page.content()
-      $ = await cheerio.load(body)
+      if(!nothingNew){
+        await page.goto(url);
+        body = await page.content()
+        $ = await cheerio.load(body)
 
-      let lastPage = await $('.page-nav > a.last').text();
-      let tmpPage = 1;
-      let newsNum = 0;  //first five post use scrapyNum
-      let tmpNews = {
+        let lastPage = await $('.page-nav > a.last').text();
+        let tmpPage = 1;
+        let newsNum = 0;  //first five post use scrapyNum
+        let tmpNews = {
               date:'',
        		    href:'',
               image:'',
               title:''
-      }
-      console.log('page number = ' + lastPage);
+        }
+        console.log('page number = ' + lastPage);
            
 
-      while(tmpPage <= lastPage){
-        //console.log('now at page:' + tmpPage.toString());
-        if(tmpPage != 1){
-          await page.goto(url + 'page/' + tmpPage.toString());
-          body = await page.content()
-          $ = await cheerio.load(body)
-        }
+        while(tmpPage <= lastPage){
+          //console.log('now at page:' + tmpPage.toString());
+          if(tmpPage != 1){
+            await page.goto(url + 'page/' + tmpPage.toString());
+            body = await page.content()
+            $ = await cheerio.load(body)
+          }
 
-        for(let i=0;i < $('.td-block-span6 h3.entry-title.td-module-title > a').length; i=i+1){
-            console.log($('.td-block-span6 h3.entry-title.td-module-title > a')[i].attribs.href)
-            if(lastestNews.href != $('.td-block-span6 h3.entry-title.td-module-title > a')[i].attribs.href){
+          for(let i=0;i < $('.td-block-span6 h3.entry-title.td-module-title > a').length; i=i+1){
+              console.log($('.td-block-span6 h3.entry-title.td-module-title > a')[i].attribs.href)
+              if(lastestNews.href != $('.td-block-span6 h3.entry-title.td-module-title > a')[i].attribs.href){
 
-              tmpNews.href = $('.td-block-span6 h3.entry-title.td-module-title > a')[i].attribs.href;
-              tmpNews.title = $($('.td-block-span6 h3.entry-title.td-module-title')[i]).text();
-              tmpNews.image = $($('.td-block-span6 a.td-image-wrap img')[i]).attr('src');//maybe change to srcset to scrapy bigger pic
-              tmpNews.date = $($('.td-block-span6 span.td-post-date > time.entry-date.updated.td-module-date')[i]).attr('datetime');
+                tmpNews.href = $('.td-block-span6 h3.entry-title.td-module-title > a')[i].attribs.href;
+                tmpNews.title = $($('.td-block-span6 h3.entry-title.td-module-title')[i]).text();
+                tmpNews.image = $($('.td-block-span6 a.td-image-wrap img')[i]).attr('src');//maybe change to srcset to scrapy bigger pic
+                tmpNews.date = $($('.td-block-span6 span.td-post-date > time.entry-date.updated.td-module-date')[i]).attr('datetime');
 
-              htmlHead =  htmlHead + '<div>' + tmpNews.title + '</div>';
-              htmlHead =  htmlHead + '<img src = \"' + tmpNews.image + '\">';
-              htmlHead =  htmlHead + '<a href = \"' + tmpNews.href + '\">' + tmpNews.href + '</a>';;
-              htmlHead =  htmlHead + '<div>' + tmpNews.date + '</div>';
+                htmlHead =  htmlHead + '<div>' + tmpNews.title + '</div>';
+                htmlHead =  htmlHead + '<img src = \"' + tmpNews.image + '\">';
+                htmlHead =  htmlHead + '<a href = \"' + tmpNews.href + '\">' + tmpNews.href + '</a>';;
+                htmlHead =  htmlHead + '<div>' + tmpNews.date + '</div>';
 
-              addNews.push({
-                date: tmpNews.date,
-       		      href: tmpNews.href,
-                image: tmpNews.image,
-                title: tmpNews.title
-              })
+                addNews.push({
+                  date: tmpNews.date,
+       		        href: tmpNews.href,
+                  image: tmpNews.image,
+                  title: tmpNews.title
+                })
 
-              scrapyNum = scrapyNum + 1;
-            }
-            else{
-              tmpPage = lastPage;
-              break;
-            }  
-        }
+                scrapyNum = scrapyNum + 1;
+              }
+              else{
+                tmpPage = lastPage;
+                break;
+              }  
+          }
+          tmpPage = tmpPage + 1;
+        }//end for tmpPage <= lastPage while loop
 
-        tmpPage = tmpPage + 1;
+        
       }
 
       //write into firestore

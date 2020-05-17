@@ -1,0 +1,257 @@
+/**
+ * Responds to any HTTP request.
+ *
+ * @param {!express:Request} req HTTP request context.
+ * @param {!express:Response} res HTTP response context.
+ */
+exports.fc_keyTech_scrapy = async (req, res) => {
+  
+const puppeteer = require('puppeteer');
+const cheerio = require('cheerio');
+
+//initialize firestore
+const admin = require('firebase-admin');
+const functions = require('firebase-functions');
+admin.initializeApp(functions.config().firebase);
+let db = admin.firestore();
+
+//puppeteer
+const PUPPETEER_OPTIONS = {
+  headless: true,
+  timeout: 0,
+  args: [
+    '--no-sandbox',
+    '--disable-setuid-sandbox'
+  ],
+};
+
+  let htmlHead = '<html><body>';
+  let htmlTail = '</body></html>';
+  //await res.writeHead(200, {'Content-Type':'text/html;charset=utf-8'});
+  
+  let url = 'https://fc.bnext.com.tw/category/techonology/';
+  let lastestNews = {
+      date:'',
+      href:'',
+      image:'',
+      title:''
+  };
+  let scrapyNum = 0;
+  let nothingNew = false;
+  let addNews = [];
+  let addNews_startIndex = 0;
+  //get last 1 news
+  await db.collection('all_news').where('data_src', '==', 'fc_keyTech').orderBy('date', 'desc').limit(1).get()
+  .then((snapshot) => {
+    snapshot.forEach((doc) => {
+      lastestNews = doc.data();
+      console.log(doc.data().date, doc.data().title);
+      htmlHead =  htmlHead + '<div>yooooo' +  lastestNews.title + '</div>';
+    });
+  })
+  .catch((err) => {
+    console.log('Error getting documents', err);
+  });
+
+  try{
+  		const browser = await puppeteer.launch(PUPPETEER_OPTIONS);
+      const page = await browser.newPage();
+      await page.goto(url);
+      let body = await page.content()
+      let $ = await cheerio.load(body)
+
+      //first big post
+      await $('.td_module_mx5 .td-meta-info-container  h3.entry-title.td-module-title > a').map(async (i,elem)=>{  
+        	if(lastestNews.href != $(elem).attr('href')){
+            console.log('i am in if : last scrape news ',lastestNews.title,' first big post ',$(elem).text());
+            addNews.push({
+              date:'',
+       		    href:'',
+              image:'',
+              title:''
+            });
+            console.log($(elem).text());          //scrapy title
+            addNews[0].title = $(elem).text();
+            htmlHead =  htmlHead + '<div>' + $(elem).text() + '</div>';
+
+            //console.log($(elem).attr('href'));    //scrapy href
+            addNews[0].href = $(elem).attr('href');
+        	  htmlHead = htmlHead + '<a href = \"' + $(elem).attr('href') + '\">' + $(elem).attr('href') + '</a>';
+            scrapyNum = scrapyNum + 1;
+            addNews_startIndex = 1;
+          }
+          else{
+            console.log('i am in else');
+            nothingNew = true;
+            await res.write(htmlHead + scrapyNum.toString() + "NEWS"  + htmlTail);
+            await res.end();
+          }
+      });
+
+      if(!nothingNew){
+      await $('.td_module_mx5 .td-meta-info-container .td-post-date > time').each((i,elem)=>{     //scrapy post time
+          //console.log($(elem).attr('datetime'));
+          addNews[0].date = $(elem).attr('datetime');
+        	htmlHead =  htmlHead + '<div>' + $(elem).text() + '</div>';
+      });
+
+      await $('.td_module_mx5 .td-module-thumb img').each((i,elem)=>{ 
+          //console.log($(elem).attr('src'));
+          addNews[0].image = $(elem).attr('src');
+        	htmlHead = htmlHead + '<img src = \"' + $(elem).attr('src') + '\">';
+      });
+
+      }//end for if
+
+      //next 4 big post
+      if(!nothingNew){
+      let newIndex = [];
+    
+      for (let i = 0;i < 4;i = i+1){
+         //let element =await $('.td_module_mx6 .td-meta-info-container h3.entry-title')[i];
+         let element = await $('.td_module_mx6 .td-module-thumb > a')[i];
+         //if(lastestNews.title != $(element).text()){
+         if(lastestNews.href != $(element).attr('href')){
+            addNews.push({
+              date:'',
+       		    href:'',
+              image:'',
+              title:''
+            });
+            
+            //scrapy title
+            //console.log($($('.td_module_mx6 .td-meta-info-container h3.entry-title a')[i]).text())
+            addNews[addNews_startIndex + i].title = $($('.td_module_mx6 .td-meta-info-container h3.entry-title a')[i]).text();
+            newIndex.push(i);
+            htmlHead =  htmlHead + '<div>' + addNews[addNews_startIndex + i].title + '</div>';
+            scrapyNum = scrapyNum + 1;
+          }
+          else{
+            nothingNew = true;
+            break;
+          }
+      }
+      
+      
+      let fourPost_url = [];
+      await $('.td_module_mx6 .td-module-thumb > a').each( (i,elem)=>{ 
+          for(const index of newIndex){
+            //get post url
+            if(i == index){
+              console.log(addNews[addNews_startIndex + i].title);
+              fourPost_url.push($(elem).attr('href'));
+              addNews[addNews_startIndex + i].href = $(elem).attr('href');
+              htmlHead = htmlHead + '<a href = \"' + $(elem).attr('href') + '\">' + $(elem).attr('href') + '</a>'; 
+            }
+          }
+      });
+
+      //https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
+      if(fourPost_url.length > 0){
+        let tmpIndex = addNews_startIndex;
+        for( const url of fourPost_url){
+          await page.goto(url);
+          body = await page.content()
+          $ = await cheerio.load(body)
+
+          await $('.td-post-content .td-post-featured-image img.entry-thumb').each((index,element)=>{
+              htmlHead = htmlHead + '<img src = \"' + $(element).attr('src') + '\">';
+              addNews[tmpIndex].image = $(element).attr('src');
+          });
+
+          await $('.td-post-title .td-post-date > time').each((index,element)=>{
+             htmlHead =  htmlHead + '<div>' + $(element).text() + '</div>';
+              addNews[tmpIndex].date = $(element).attr('datetime');
+          });
+        
+          tmpIndex = tmpIndex + 1;
+        }
+      }
+      addNews_startIndex = 5;
+      }
+
+      /////////////////////////////scrapy typical post///////////////////////////////////////////
+      if(!nothingNew){
+        await page.goto(url);
+        body = await page.content()
+        $ = await cheerio.load(body)
+
+        let lastPage = await $('.page-nav > a.last').text();
+        let tmpPage = 1;
+        let newsNum = 0;  //first five post use scrapyNum
+        let tmpNews = {
+                date:'',
+       		      href:'',
+               image:'',
+                title:''
+        }
+       console.log('page number = ' + lastPage);
+           
+
+        while(tmpPage <= lastPage){
+          //console.log('now at page:' + tmpPage.toString());
+          if(tmpPage != 1){
+            await page.goto(url + 'page/' + tmpPage.toString());
+            body = await page.content()
+           $ = await cheerio.load(body)
+          }
+
+          for(let i=0;i < $('.td-block-span6 h3.entry-title.td-module-title > a').length; i=i+1){
+              console.log($('.td-block-span6 h3.entry-title.td-module-title > a')[i].attribs.href)
+              if(lastestNews.href != $('.td-block-span6 h3.entry-title.td-module-title > a')[i].attribs.href){
+
+                tmpNews.href = $('.td-block-span6 h3.entry-title.td-module-title > a')[i].attribs.href;
+                tmpNews.title = $($('.td-block-span6 h3.entry-title.td-module-title')[i]).text();
+                tmpNews.image = $($('.td-block-span6 a.td-image-wrap img')[i]).attr('src');//maybe change to srcset to scrapy bigger pic
+                tmpNews.date = $($('.td-block-span6 span.td-post-date > time.entry-date.updated.td-module-date')[i]).attr('datetime');
+
+                htmlHead =  htmlHead + '<div>' + tmpNews.title + '</div>';
+                htmlHead =  htmlHead + '<img src = \"' + tmpNews.image + '\">';
+                htmlHead =  htmlHead + '<a href = \"' + tmpNews.href + '\">' + tmpNews.href + '</a>';;
+                htmlHead =  htmlHead + '<div>' + tmpNews.date + '</div>';
+
+                addNews.push({
+                 date: tmpNews.date,
+       		       href: tmpNews.href,
+                  image: tmpNews.image,
+                 title: tmpNews.title
+                })
+
+                scrapyNum = scrapyNum + 1;
+              }
+              else{
+                tmpPage = lastPage;
+               break;
+             }  
+            }
+
+          tmpPage = tmpPage + 1;
+        }//end for tmpPage <= lastPage while loop
+      }
+
+      //write into firestore
+      await addNews.forEach(element =>{
+    	    db.collection('all_news').add({
+       	    date: admin.firestore.Timestamp.fromDate(new Date(element.date)),
+            href: element.href,
+            image: element.image,
+            title: element.title,
+            data_src: 'fc_keyTech'
+          });
+      })
+
+      await browser.close();
+      await res.write(htmlHead + htmlTail);////////////////////////
+      await res.end();//////////////////////////
+      console.log("total scrapy num :",scrapyNum );
+  }catch(err){
+		  res.status(500).send(err.message);
+  }
+
+  /*await res.write(htmlHead + htmlTail);
+  await res.end();*/
+  //await res.status(200).send('good');
+};
+
+
+

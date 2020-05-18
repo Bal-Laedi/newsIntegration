@@ -4,6 +4,8 @@
  * @param {!express:Request} req HTTP request context.
  * @param {!express:Response} res HTTP response context.
  */
+exports.fc_keyTech_scrapy = async (req, res) => {
+  
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 
@@ -23,13 +25,11 @@ const PUPPETEER_OPTIONS = {
   ],
 };
 
-
-exports.fc_scrapyNew_test = async (req, res) => {
   let htmlHead = '<html><body>';
   let htmlTail = '</body></html>';
   //await res.writeHead(200, {'Content-Type':'text/html;charset=utf-8'});
   
-  let url = 'https://fc.bnext.com.tw/category/business-model/';
+  let url = 'https://fc.bnext.com.tw/category/techonology/';
   let lastestNews = {
       date:'',
       href:'',
@@ -41,7 +41,7 @@ exports.fc_scrapyNew_test = async (req, res) => {
   let addNews = [];
   let addNews_startIndex = 0;
   //get last 1 news
-  await db.collection('all_news').where('data_src', '==', 'fc_businessModel').orderBy('date', 'desc').limit(1).get()
+  await db.collection('all_news').where('data_src', '==', 'fc_keyTech').orderBy('date', 'desc').limit(1).get()
   .then((snapshot) => {
     snapshot.forEach((doc) => {
       lastestNews = doc.data();
@@ -180,12 +180,12 @@ exports.fc_scrapyNew_test = async (req, res) => {
         let tmpPage = 1;
         let newsNum = 0;  //first five post use scrapyNum
         let tmpNews = {
-              date:'',
-       		    href:'',
-              image:'',
-              title:''
+                date:'',
+       		      href:'',
+               image:'',
+                title:''
         }
-        console.log('page number = ' + lastPage);
+       console.log('page number = ' + lastPage);
            
 
         while(tmpPage <= lastPage){
@@ -193,7 +193,7 @@ exports.fc_scrapyNew_test = async (req, res) => {
           if(tmpPage != 1){
             await page.goto(url + 'page/' + tmpPage.toString());
             body = await page.content()
-            $ = await cheerio.load(body)
+           $ = await cheerio.load(body)
           }
 
           for(let i=0;i < $('.td-block-span6 h3.entry-title.td-module-title > a').length; i=i+1){
@@ -211,23 +211,22 @@ exports.fc_scrapyNew_test = async (req, res) => {
                 htmlHead =  htmlHead + '<div>' + tmpNews.date + '</div>';
 
                 addNews.push({
-                  date: tmpNews.date,
-       		        href: tmpNews.href,
+                 date: tmpNews.date,
+       		       href: tmpNews.href,
                   image: tmpNews.image,
-                  title: tmpNews.title
+                 title: tmpNews.title
                 })
 
                 scrapyNum = scrapyNum + 1;
               }
               else{
                 tmpPage = lastPage;
-                break;
-              }  
-          }
+               break;
+             }  
+            }
+
           tmpPage = tmpPage + 1;
         }//end for tmpPage <= lastPage while loop
-
-        
       }
 
       //write into firestore
@@ -237,7 +236,7 @@ exports.fc_scrapyNew_test = async (req, res) => {
             href: element.href,
             image: element.image,
             title: element.title,
-            data_src: 'fc_businessModel'
+            data_src: 'fc_keyTech'
           });
       })
 
@@ -253,4 +252,6 @@ exports.fc_scrapyNew_test = async (req, res) => {
   await res.end();*/
   //await res.status(200).send('good');
 };
+
+
 

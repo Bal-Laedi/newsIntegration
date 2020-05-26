@@ -10,7 +10,7 @@ class Navbar extends Component{
 		return(
 			<div className="Navbar">
 				<div>
-					<span className="nav-item">filter</span>
+					<span className="nav-item" data-uk-toggle="target: #offcanvas-overlay">filter</span>
 					<span className="nav-item" onClick={this.props.whichData}>like</span>
 					<span className="nav-item" >history</span>
 					<span className="nav-item">Signin</span>

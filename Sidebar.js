@@ -8,8 +8,10 @@ class Sidebar_item extends Component{
 		this.toggle_dataSrc = this.toggle_dataSrc.bind(this);
 	}
 
-	toggle_dataSrc(){
-		this.setState({check: !this.state.check});
+	toggle_dataSrc(evt){
+		this.props.change_dataSrc_arr(this.state.check,evt.target.getAttribute("collection"))
+		this.setState({check: !this.state.check}, ()=>{console.log("hwbjahbfkbf")} );
+		//;//Maybe need to use callback after setState
 	}
 
 	render(){
@@ -39,21 +41,49 @@ class Sidebar_item extends Component{
 class Sidebar extends Component{
 	
 	constructor(){
+		console.log('in sidebar ctr')
 		super();
 		this.state = {data_source_arr: []};
-	}
-
-	componentDidMount(){
+		this.change_dataSrc_arr = this.change_dataSrc_arr.bind(this);
+		let all_data_src = [];
 		db.collection('data_source').get().then((querySnapshot) => {
 			querySnapshot.forEach((doc) => {
    				this.setState(state => {
-    							//不能用push https://www.robinwieruch.de/react-state-array-add-update-remove
-   					const data_source_arr = this.state.data_source_arr.concat({'id':doc.id , 'collection':doc.data().collection ,'name':doc.data().name});
+    				//不能用push https://www.robinwieruch.de/react-state-array-add-update-remove
+   					const data_source_arr = this.state.data_source_arr.concat({'id':doc.id , 'collection':doc.data().collection , 'name':doc.data().name, 'check': true});
+   					all_data_src.push(doc.data().collection)
    					return {data_source_arr};
    				})
-			})			
+			})
+			//this.props.choose_DataSrc(all_data_src)
 		})
 	}
+
+	componentDidMount(){
+		console.log('in sidebar componentDidMount')
+	}
+
+	change_dataSrc_arr(check, changed_collection){
+
+		//change state data_source_arr 
+		for(let i=0; i<this.state.data_source_arr.length; i=i+1){
+			if(changed_collection === this.state.data_source_arr[i].collection){
+				this.state.data_source_arr[i].check = !check;
+				console.log(this.state.data_source_arr[i].check, changed_collection)
+				break;
+			}
+		}
+
+		let check_dataSrc = []
+		for(let i=0; i<this.state.data_source_arr.length; i=i+1){
+			if(this.state.data_source_arr[i].check){
+				check_dataSrc.push(this.state.data_source_arr[i].collection);
+			}
+		}
+		this.props.choose_DataSrc(check_dataSrc);
+	}
+
+
 
 	render(){
 
@@ -66,7 +96,7 @@ class Sidebar extends Component{
         			{	
 						this.state.data_source_arr.map((doc) => {				
     						return(
-								<Sidebar_item key={doc.id} collection={doc.collection} data_source={doc.name}/>
+								<Sidebar_item key={doc.id} collection={doc.collection} data_source={doc.name} change_dataSrc_arr={this.change_dataSrc_arr}/>
     						)
     					})	
 					}

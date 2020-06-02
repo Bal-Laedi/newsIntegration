@@ -82,8 +82,9 @@ class Project extends Component{
 class Projects extends Component{//prop 給collection名稱
 	constructor(){
 		super();
-		this.state = {testArr: [],data: "all_news",page: 1, totalPage: 1};
+		this.state = {testArr: [],data: "all_news",page: 1, totalPage: 1, data_src: []};
 		this.whichData = this.whichData.bind(this);
+		this.choose_DataSrc = this.choose_DataSrc.bind(this);
 	}
 
 	componentDidMount(){
@@ -103,13 +104,7 @@ class Projects extends Component{//prop 給collection名稱
     				return {testArr};
     			})
 			}
-			/*querySnapshot.forEach((doc) => {
-    			this.setState(state => {
-    				//不能用push https://www.robinwieruch.de/react-state-array-add-update-remove
-    				const testArr = this.state.testArr.concat({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date});
-    				return {testArr};
-    			})
-			})*/
+
     	})
     }
 
@@ -117,7 +112,7 @@ class Projects extends Component{//prop 給collection名稱
 		
 		if(this.state.data !== prevState.data){
 			
-			db.collection(this.state.data).orderBy("date", "desc").limit(12).get().then((querySnapshot) => {
+			db.collection(this.state.data).orderBy("date", "desc").where('data_src', 'in', this.state.data_src).limit(12).get().then((querySnapshot) => {
 				querySnapshot.forEach((doc) => {
     				this.setState(state => {
     					//不能用push https://www.robinwieruch.de/react-state-array-add-update-remove
@@ -131,9 +126,9 @@ class Projects extends Component{//prop 給collection名稱
 			console.log('in change page');
 			let lastNews, nextPage;
 			if(this.state.page !== 1){
-				db.collection(this.state.data).orderBy("date", "desc").limit(12 * (this.state.page-1)).get().then((querySnapshot) => {
+				db.collection(this.state.data).orderBy("date", "desc").where('data_src', 'in', this.state.data_src).limit(12 * (this.state.page-1)).get().then((querySnapshot) => {
 					lastNews = querySnapshot.docs[querySnapshot.docs.length-1];
-					nextPage = db.collection(this.state.data).orderBy("date", "desc").startAfter(lastNews).limit(12);
+					nextPage = db.collection(this.state.data).orderBy("date", "desc").where('data_src', 'in', this.state.data_src).startAfter(lastNews).limit(12);
 				})
 				.then(() =>{
     				nextPage.get().then((querySnapshot) => {
@@ -148,7 +143,7 @@ class Projects extends Component{//prop 給collection名稱
     			})
 			}
 			else{	//this.state.page = 1
-				db.collection(this.state.data).orderBy("date", "desc").limit(12).get().then((querySnapshot) => {
+				db.collection(this.state.data).orderBy("date", "desc").where('data_src', 'in', this.state.data_src).limit(12).get().then((querySnapshot) => {
 					querySnapshot.forEach((doc) => {
     					this.setState(state => {
     						//不能用push https://www.robinwieruch.de/react-state-array-add-update-remove
@@ -158,6 +153,17 @@ class Projects extends Component{//prop 給collection名稱
     				})
     			})
 			}
+		}
+		else if(this.state.data_src !== prevState.data_src){
+			db.collection(this.state.data).orderBy("date", "desc").where('data_src', 'in', this.state.data_src).limit(12).get().then((querySnapshot) => {
+					querySnapshot.forEach((doc) => {
+    					this.setState(state => {
+    						//不能用push https://www.robinwieruch.de/react-state-array-add-update-remove
+   							const testArr = this.state.testArr.concat({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date, 'data_src': doc.data().data_src});
+   							return {testArr};
+   						})				
+    				})
+    			})
 		}
 	}
 
@@ -174,12 +180,17 @@ class Projects extends Component{//prop 給collection名稱
 		}
 	}
 
+	choose_DataSrc(collection){
+		console.log("Sidebar", collection);
+		this.setState({testArr: [], data_src: collection.slice()});
+	}
+
 	render(){
 		
     	if(this.state.testArr.length > 0){
 			return(
 				<div className='container'>
-					<Sidebar /> 
+					<Sidebar choose_DataSrc={this.choose_DataSrc}/> 
 					<Navbar whichData={this.whichData}/>
 					<div className='Projects'>
 						{	

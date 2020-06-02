@@ -122,7 +122,7 @@ class Projects extends Component{//prop 給collection名稱
 				})
     		})
 		}
-		else if(this.state.page !== prevState.page){
+		else if(this.state.page !== prevState.page || this.state.data_src !== prevState.data_src){
 			console.log('in change page');
 			let lastNews, nextPage;
 			if(this.state.page !== 1){
@@ -154,17 +154,7 @@ class Projects extends Component{//prop 給collection名稱
     			})
 			}
 		}
-		else if(this.state.data_src !== prevState.data_src){
-			db.collection(this.state.data).orderBy("date", "desc").where('data_src', 'in', this.state.data_src).limit(12).get().then((querySnapshot) => {
-					querySnapshot.forEach((doc) => {
-    					this.setState(state => {
-    						//不能用push https://www.robinwieruch.de/react-state-array-add-update-remove
-   							const testArr = this.state.testArr.concat({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date, 'data_src': doc.data().data_src});
-   							return {testArr};
-   						})				
-    				})
-    			})
-		}
+		
 	}
 
 
@@ -182,7 +172,7 @@ class Projects extends Component{//prop 給collection名稱
 
 	choose_DataSrc(collection){
 		console.log("Sidebar", collection);
-		this.setState({testArr: [], data_src: collection.slice()});
+		this.setState({testArr: [], data_src: collection.slice(), page: 1});
 	}
 
 	render(){

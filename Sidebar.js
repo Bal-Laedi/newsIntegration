@@ -41,7 +41,6 @@ class Sidebar_item extends Component{
 class Sidebar extends Component{
 	
 	constructor(){
-		console.log('in sidebar ctr')
 		super();
 		this.state = {data_source_arr: []};
 		this.change_dataSrc_arr = this.change_dataSrc_arr.bind(this);
@@ -59,9 +58,7 @@ class Sidebar extends Component{
 		})
 	}
 
-	componentDidMount(){
-		console.log('in sidebar componentDidMount')
-	}
+	
 
 	change_dataSrc_arr(check, changed_collection){
 

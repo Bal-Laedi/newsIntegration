@@ -1,0 +1,14 @@
+const dataSrcFilter = (state = [], action) => {
+	switch(action.type) {
+		case 'TOGGLE_NEWS_SOURCE':
+			return state.map(dataSrc =>
+				(dataSrc.id === action.filter.id)
+				? {...dataSrc, check: !dataSrc.check}
+				: check
+			)
+		default:
+			return state
+	}
+}
+
+export default dataSrcFilter;

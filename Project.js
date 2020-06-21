@@ -80,9 +80,12 @@ class Project extends Component{
 //solution: https://stackoverflow.com/questions/27192621/reactjs-async-rendering-of-components
 //////////////////////////////////////////////////////////////////////////
 class Projects extends Component{//prop 給collection名稱
-	constructor(){
-		super();
-		this.state = {testArr: [],data: "all_news",page: 1, totalPage: 1, data_src: []};
+	constructor(props){	
+		super(props);	//props: newsList, addNews(redux)
+		//this.state = {testArr: [],data: "all_news",page: 1, totalPage: 1, data_src: []};
+		console.log("props: new",this.props.newsList)
+		console.log("props: add", this.props.addNews)
+		this.state = {data: "all_news",page: 1, totalPage: 1, data_src: []};
 		this.whichData = this.whichData.bind(this);
 		this.choose_DataSrc = this.choose_DataSrc.bind(this);
 	}
@@ -98,17 +101,19 @@ class Projects extends Component{//prop 給collection名稱
 			
 			for(let i=0;i<12;i++){
 				let doc = querySnapshot.docs[i];
-				this.setState(state => {
+				/*this.setState(state => {
     				//不能用push https://www.robinwieruch.de/react-state-array-add-update-remove
     				const testArr = this.state.testArr.concat({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date, 'data_src': doc.data().data_src});
     				return {testArr};
-    			})
+    			})*/
+    			this.props.addNews({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date, 'data_src': doc.data().data_src})
 			}
 
     	})
+    	
     }
 
-	componentDidUpdate(prevProps, prevState){
+	/*componentDidUpdate(prevProps, prevState){
 		
 		if(this.state.data !== prevState.data){
 			
@@ -155,7 +160,7 @@ class Projects extends Component{//prop 給collection名稱
 			}
 		}
 		
-	}
+	}*/
 
 
 	whichData(evt){
@@ -177,14 +182,14 @@ class Projects extends Component{//prop 給collection名稱
 
 	render(){
 		
-    	if(this.state.testArr.length > 0){
+    	//if(this.state.testArr.length > 0){
+    	if(this.props.newsList.length > 0){
 			return(
 				<div className='container'>
-					<Sidebar choose_DataSrc={this.choose_DataSrc}/> 
-					<Navbar whichData={this.whichData}/>
+					
 					<div className='Projects'>
 						{	
-							this.state.testArr.map((doc) => {				
+							this.props.newsList.map((doc) => {				
     							return(
 									<Project key={doc.id} cardId={doc.id} image={doc.image} title={doc.title} href={doc.href} date={doc.date} data_src={doc.data_src}/>
     							)
@@ -199,12 +204,23 @@ class Projects extends Component{//prop 給collection名稱
 		else{
 			return( 
 				<div>
-					<Navbar whichData={this.whichData}/>
 					<div>Loading</div>
 				</div>
 			)
 		}
 	}//end of render()
 }
+
+/*Projects.propTypes = {
+  	newsList: React.PropTypes.arrayOf(PropTypes.shape({
+    id: React.PropTypes.string.isRequired,
+    href: React.PropTypes.string.isRequired,
+	image: React.PropTypes.string.isRequired,
+	title: React.PropTypes.string.isRequired,
+	date: React.PropTypes.string.isRequired,
+	data_src: React.PropTypes.string.isRequired
+  }).isRequired).isRequired,
+  addNews: React.PropTypes.func.isRequired
+}*/
 
 export default Projects;

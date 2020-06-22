@@ -5,6 +5,9 @@ import { createStore } from 'redux'
 import { Provider } from 'react-redux';
 import rootReducer from './reducers/combineReducers'
 import Navbar from './Navbar'
+import Sidebar from './Sidebar'
+
+
 
 const store = createStore(rootReducer);
 console.log("hello my friend")

@@ -1,0 +1,103 @@
+.Pagination{
+	padding: 0 15%;
+}
+
+.Pagination button{
+	background-color: rgb(255,250,240);
+	color: #2F4F4F;
+	border: solid 1px #b1b1b1;
+	border-radius: 2px;
+	font-size: 20px;
+	width: 40px;
+	height: 40px;
+	margin: 10px 5px;
+}
+
+.Pagination button:hover{
+	border: solid 1px blue;
+	color: blue;
+}
+
+.Pagination button.AtPage{
+	border: solid 1px blue;
+	color: blue;
+}
+
+
+.Projects{
+	padding: 0 15%;
+	height: 100%;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr;
+	grid-template-rows: repeat(3, 50vh);
+	grid-gap: 1em;
+}
+
+.Project{
+	/*padding-top: 5px;*/
+	/*width: 24%;*/
+	/*border: 1px;
+	border-style: solid; */
+	font-size: 22px;
+
+	border-radius: 10px;
+
+	box-shadow: 1px 2px 2px -2px rgba(0, 0, 0, 0.9);
+	
+
+	display: grid;
+    grid-template-rows: [first]1fr[src]4fr[image]1.5fr[title]1fr[btn];
+    overflow: hidden;
+}
+
+
+.Project img{
+	grid-row-start: src;
+	grid-row-end: image;
+	text-align: center;
+	width: 100%;
+	
+	/*width: 393px;*/
+	overflow: hidden;
+}
+
+.Project div{
+
+	padding: 10px;
+	background-color: #fff;
+}
+
+.Project button{
+	border-radius: 50px; 
+	background-color: rgba(0,0,0,0);
+	border-style: none;
+	color: purple;
+	font-size: 18px;
+	/*margin: 10px;*/
+}
+
+.Project button:hover{
+	background-color: rgba(255,0,255,0.2);
+
+}.Navbar{
+	width: 100%;
+	height: 50px;
+	color: white;
+	background-color: #000;
+	margin: 0px;
+	display: flex;
+	
+}
+
+.Navbar > div{
+	position: absolute;
+	right: 10%;
+}
+
+.nav-item{
+	
+	font-size: 30px; 
+	color: #fff;
+ 	margin: 0 50px;
+	
+}

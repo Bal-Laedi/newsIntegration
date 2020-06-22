@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { addNews } from '../actions/action';
+import { addNews, addDataSource } from '../actions/action';
 import Projects from '../Project';
 
 const getNewsList = (newsList, filter) =>{
@@ -12,11 +12,13 @@ const getNewsList = (newsList, filter) =>{
 }
 
 const mapStateToProps = state => ({
-	newsList: state.newsList
+	newsList: state.newsList,
+	data_src_arr: state.dataSrcFilter.filter(dataSrc => dataSrc.check === true)
+									 .map(obj => obj.collection)
 })
 
 const mapDispatchToProps = dispatch => ({
-	addNews: news => dispatch(addNews(news))
+	addNews: news => dispatch(addNews(news)),
 })
 
 export default connect(

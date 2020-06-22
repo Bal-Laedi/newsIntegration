@@ -12,6 +12,8 @@ const newsList = (state = [], action) => {
 					'data_src': action.news.data_src
 				}
 			]
+		case 'EMPTY_NEWS':
+			return []
 		default:
 			return state
 	}	

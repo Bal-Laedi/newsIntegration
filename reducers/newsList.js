@@ -3,14 +3,19 @@ const newsList = (state = [], action) => {
 		case 'ADD_NEWS':
 			return [
 				...state,
-				{
-					'id': action.news.id,
-					'href': action.news.href,
-					'image': action.news.image,
-					'title': action.news.title,
-					'date': action.news.date,
-					'data_src': action.news.data_src
-				}
+				action.news.map((doc) => {
+					return(
+						{
+							'id': doc.id,
+							'href': doc.href,
+							'image': doc.image,
+							'title': doc.title,
+							'date': doc.date,
+							'data_src': doc.data_src
+						}
+					)
+						
+				})
 			]
 		case 'EMPTY_NEWS':
 			return []

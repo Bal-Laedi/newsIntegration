@@ -1,77 +1,14 @@
 import React,{ Component } from 'react';
 import db from './initial_firebase';
 import Pagination from './Pagination';
+import GridContainer from './GridContainer';
 import './Project.css';
 
 
 
 
 
-class Project extends Component{
-	constructor(props){
-		super(props);
-		this.state = {like: false}
-		this.like = this.like.bind(this);	//為了讓this`能在like中被使用
-	}
 
-	componentDidMount(){
-		db.collection("like").where("title", "==", this.props.title).get()
-		.then((querySnapshot) =>{
-			if(querySnapshot.size === 0){
-				this.setState({like: false});
-			}
-			else{
-				this.setState({like: true});
-			}
-		});
-		
-	}
-
-	like(){
-		
-		if(!this.state.like){
-			db.collection("like").doc(this.props.cardId).set({
-				'href': this.props.href,
-				'image': this.props.image,
-				'title': this.props.title,
-				'date': this.props.date,
-				'data_src': this.props.data_src
-			})
-			.then(()=>{
-				this.setState({like: !this.state.like});
-			    alert("已收藏");
-			})
-	    }
-	    else{
-	    	db.collection("like").doc(this.props.cardId).delete().then(()=>{
-	    		this.setState({like: !this.state.like});
-    			alert("已取消收藏");
-			})
-	    }
-
-	}
-
-	render(){
-		let likeButton;
-		if(!this.state.like){
-			likeButton = <button onClick={this.like}><img src="https://img.icons8.com/material-outlined/24/000000/filled-like.png"/></button>;
-		}
-		else{
-			likeButton = <button onClick={this.like}><img src="https://img.icons8.com/cute-clipart/64/000000/like.png"/></button>;
-		}
-		return(
-			<div className = 'Project' style={{ backgroundImage: "url(" + this.props.image + ")" }}>
-				
-				<div><strong>{this.props.title}</strong></div>
-				<div>{this.props.data_src}</div>
-				{/*}<div>
-					{likeButton}
-					<button><a href={this.props.href}><img src="https://img.icons8.com/ios-glyphs/30/000000/read.png"/></a></button>
-				</div>{*/}
-			</div>
-		);
-	}
-}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -93,15 +30,17 @@ class Projects extends Component{//prop 給collection名稱
 			next = db.collection(this.state.data).orderBy("date", "desc").startAfter(lastNews).limit(12)*/
 			this.setState({ totalPage: Math.ceil(querySnapshot.docs.length/12) });	//calculate total Page nember
 			
-			for(let i=0;i<12;i++){
-				let doc = querySnapshot.docs[i];
-				/*this.setState(state => {
-    				//不能用push https://www.robinwieruch.de/react-state-array-add-update-remove
-    				const testArr = this.state.testArr.concat({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date, 'data_src': doc.data().data_src});
-    				return {testArr};
-    			})*/
-    			this.props.addNews({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date, 'data_src': doc.data().data_src})
-			}
+			let page = 3;
+			let nineNews = [];
+			for(let i=0;i<page;i++){
+				for(let j=0;j<9;j++){
+					let doc = querySnapshot.docs[i*9+j];
+					nineNews.push({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date, 'data_src': doc.data().data_src});
+    				
+    			}
+    			this.props.addNews(nineNews)
+    			nineNews = [];
+			}	
 
     	})
     }
@@ -109,7 +48,7 @@ class Projects extends Component{//prop 給collection名稱
     componentDidUpdate(prevProps){
     	if(this.props.newsList.length === 0 && prevProps.newsList.length > 0){	//change data_src_arr
     		db.collection(this.state.data).orderBy("date", "desc").where('data_src', 'in', this.props.data_src_arr).get().then((querySnapshot) => {	
-				for(let i=0;i<12;i++){
+				for(let i=0;i<9;i++){
 					let doc = querySnapshot.docs[i];
     				this.props.addNews({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date, 'data_src': doc.data().data_src})
 				}
@@ -120,22 +59,17 @@ class Projects extends Component{//prop 給collection名稱
 
 	render(){
 		
-    	//if(this.state.testArr.length > 0){
     	if(this.props.newsList.length > 0){
 			return(
-				
-					
-					<div className='Projects'>
-						{	
-							this.props.newsList.map((doc) => {				
-    							return(
-									<Project key={doc.id} cardId={doc.id} image={doc.image} title={doc.title} href={doc.href} date={doc.date} data_src={doc.data_src}/>
-    							)
-    						})	
-						}
-						
-					</div>
-				
+				<div className='Projects'>
+					{
+						this.props.newsList.map((nineNews)=>{
+							return(
+								<GridContainer nineNews={nineNews}/>
+							)
+						})
+					}
+				</div>	
 			)
 		}
 		else{

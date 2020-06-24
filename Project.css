@@ -1,23 +1,22 @@
-
-
-
 .Projects{
+	display: inline-block;
+	vertical-align:top;
+	
+}
+
+
+.GridContainer{
 	/*padding: 0 15%;*/
-	width: 90vw;
 	height: 100vh;
 	display: inline-grid;
-	grid-template-columns: 1fr 1fr 1fr 1fr;
+	grid-template-columns: 270px 270px 270px;
 	grid-template-rows: 1fr 1fr 1fr;
-	/*grid-gap: 1em;*/
-	vertical-align:top;
+	
 	overflow: hidden;
 }
 
 .Project{
 	/*padding-top: 5px;*/
-	/*width: 24%;*/
-	/*border: 1px;
-	border-style: solid; */
 	font-size: 20px;
 	background-size: 100% auto;
 

@@ -60,14 +60,14 @@ class Project extends Component{
 			likeButton = <button onClick={this.like}><img src="https://img.icons8.com/cute-clipart/64/000000/like.png"/></button>;
 		}
 		return(
-			<div className = 'Project'>
+			<div className = 'Project' style={{ backgroundImage: "url(" + this.props.image + ")" }}>
+				
+				<div><strong>{this.props.title}</strong></div>
 				<div>{this.props.data_src}</div>
-					<img src = {this.props.image} />
-					<div>{this.props.title}</div>
-					<div>
-						{likeButton}
-						<button><a href={this.props.href}><img src="https://img.icons8.com/ios-glyphs/30/000000/read.png"/></a></button>
-					</div>
+				{/*}<div>
+					{likeButton}
+					<button><a href={this.props.href}><img src="https://img.icons8.com/ios-glyphs/30/000000/read.png"/></a></button>
+				</div>{*/}
 			</div>
 		);
 	}
@@ -123,7 +123,7 @@ class Projects extends Component{//prop 給collection名稱
     	//if(this.state.testArr.length > 0){
     	if(this.props.newsList.length > 0){
 			return(
-				<div className='container'>
+				
 					
 					<div className='Projects'>
 						{	
@@ -135,7 +135,7 @@ class Projects extends Component{//prop 給collection名稱
 						}
 						
 					</div>
-				</div>
+				
 			)
 		}
 		else{

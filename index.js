@@ -22,3 +22,13 @@ ReactDOM.render(
 	</Provider>, 
 	document.getElementById('root')
 );
+
+/*let body = document.getElementsByClassName("Projects");
+console.log("body",body);
+console.log('scrollX',body.offsetWidth);*/
+
+/*window.addEventListener('scroll', function(e) {
+	console.log("body",body);
+	//console.log('scrollX',body.scrollLeft,body.scrollTop);
+	console.log('scrollX',body.clientWidth);
+})*/

@@ -1,5 +1,6 @@
 import React,{ Component } from 'react';
 import db from './initial_firebase';
+
 class Project extends Component{
 	constructor(props){
 		super(props);
@@ -53,14 +54,15 @@ class Project extends Component{
 			likeButton = <button onClick={this.like}><img src="https://img.icons8.com/cute-clipart/64/000000/like.png"/></button>;
 		}
 		return(
-			<div className = 'Project' style={{ backgroundImage: "url(" + this.props.image + ")" }}>
-				
-				<div><strong>{this.props.title}</strong></div>
-				<div>{this.props.data_src}</div>
-				{/*}<div>
-					{likeButton}
-					<button><a href={this.props.href}><img src="https://img.icons8.com/ios-glyphs/30/000000/read.png"/></a></button>
-				</div>{*/}
+			<div className = 'Project' style = {{ backgroundImage: "url(" + this.props.image + ")" }}>
+				<a className = 'mask' href = {this.props.href} target = "_blank">
+					<div><strong>{this.props.title}</strong></div>
+					<div>{this.props.data_src}</div>
+					{/*}<div>
+						{likeButton}
+						<button><a href={this.props.href}><img src="https://img.icons8.com/ios-glyphs/30/000000/read.png"/></a></button>
+					</div>{*/}
+				</a>
 			</div>
 		);
 	}

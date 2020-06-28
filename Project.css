@@ -15,14 +15,22 @@
 	overflow: hidden;
 }
 
+
 .Project{
 	/*padding-top: 5px;*/
 	font-size: 20px;
 	background-size: 100% auto;
-
-	display: inline-grid;
-    grid-template-rows: [first]1fr[src]4fr[image]1.5fr[title]1fr[btn];
     overflow: hidden;
+    white-space: normal;
+}
+
+.Project .mask{
+	display: grid;
+    grid-template-rows: [first]1fr[src]4fr[image]1.5fr[title]1fr[btn];
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.3);
+	text-decoration-color: white; 
 }
 
 

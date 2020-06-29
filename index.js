@@ -16,9 +16,9 @@ console.log("hello my friend")
 ReactDOM.render(
 	<Provider store={store}>
 		<Navbar />
-		<Sidebar />
+		{/*}<Sidebar />{*/}
 		<GetNewsList />
-
+		
 	</Provider>, 
 	document.getElementById('root')
 );

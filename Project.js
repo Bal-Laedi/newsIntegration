@@ -1,77 +1,14 @@
 import React,{ Component } from 'react';
 import db from './initial_firebase';
 import Pagination from './Pagination';
+import GridContainer from './GridContainer';
 import './Project.css';
 
 
 
 
 
-class Project extends Component{
-	constructor(props){
-		super(props);
-		this.state = {like: false}
-		this.like = this.like.bind(this);	//為了讓this`能在like中被使用
-	}
 
-	componentDidMount(){
-		db.collection("like").where("title", "==", this.props.title).get()
-		.then((querySnapshot) =>{
-			if(querySnapshot.size === 0){
-				this.setState({like: false});
-			}
-			else{
-				this.setState({like: true});
-			}
-		});
-		
-	}
-
-	like(){
-		
-		if(!this.state.like){
-			db.collection("like").doc(this.props.cardId).set({
-				'href': this.props.href,
-				'image': this.props.image,
-				'title': this.props.title,
-				'date': this.props.date,
-				'data_src': this.props.data_src
-			})
-			.then(()=>{
-				this.setState({like: !this.state.like});
-			    alert("已收藏");
-			})
-	    }
-	    else{
-	    	db.collection("like").doc(this.props.cardId).delete().then(()=>{
-	    		this.setState({like: !this.state.like});
-    			alert("已取消收藏");
-			})
-	    }
-
-	}
-
-	render(){
-		let likeButton;
-		if(!this.state.like){
-			likeButton = <button onClick={this.like}><img src="https://img.icons8.com/material-outlined/24/000000/filled-like.png"/></button>;
-		}
-		else{
-			likeButton = <button onClick={this.like}><img src="https://img.icons8.com/cute-clipart/64/000000/like.png"/></button>;
-		}
-		return(
-			<div className = 'Project'>
-				<div>{this.props.data_src}</div>
-					<img src = {this.props.image} />
-					<div>{this.props.title}</div>
-					<div>
-						{likeButton}
-						<button><a href={this.props.href}><img src="https://img.icons8.com/ios-glyphs/30/000000/read.png"/></a></button>
-					</div>
-			</div>
-		);
-	}
-}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -82,26 +19,70 @@ class Projects extends Component{//prop 給collection名稱
 		super(props);	//props: newsList, addNews(redux)
 		//this.state = {testArr: [],data: "all_news",page: 1, totalPage: 1, data_src: []};
 		this.state = {data: "all_news",page: 1, totalPage: 1};
+		this.myRef = React.createRef();
+		this.loadedGridNum = 3;
+		this.lastLoadedNews = null;
 	}
 
 	componentDidMount(){
 		console.log("in componentDidMount")
+		
+		window.addEventListener('scroll', function(e) {
+			//https://stackoverflow.com/questions/2481350/how-to-get-scrollbar-position-with-javascript
+			let Projects_scrollx;
+			//if(this.myRef !== null){
+			if(this.myRef.current !== undefined){
+			
+				Projects_scrollx = window.scrollX - this.myRef.current.offsetLeft;
+				//console.log('Projects_scrollx', Projects_scrollx);
+				
+				let nineGridWidth = this.myRef.current.childNodes[0].offsetWidth;
+				//console.log('now at page', Math.ceil(Projects_scrollx/nineGridWidth));
+				
+				let atPage = Math.ceil(Projects_scrollx/nineGridWidth);
+				if((atPage + 6) > this.loadedGridNum){
+					//console.log('need to load news to ',atPage + 6)
+					db.collection(this.state.data).orderBy("date", "desc").startAfter(this.lastLoadedNews).limit(((atPage + 6) - this.loadedGridNum)*9)
+					.get().then((querySnapshot) => {
+						let page = (atPage + 6) - this.loadedGridNum;
+						let nineNews = [];
+						for(let i=0;i<page;i++){
+							for(let j=0;j<9;j++){
+								let doc = querySnapshot.docs[i*9+j];
+								nineNews.push({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date, 'data_src': doc.data().data_src});
+    						}
+    						this.props.addNews(nineNews);
+    						nineNews = [];
+						}
+						this.lastLoadedNews = querySnapshot.docs[querySnapshot.docs.length-1];
+						//console.log(this.lastLoadedNews.data().title)
+						this.loadedGridNum = atPage + 6;
+					})
+				}
+			}
 
+		}.bind(this))
+
+		
 		db.collection(this.state.data).orderBy("date", "desc").get().then((querySnapshot) => {
 			/*let lastNews = querySnapshot.docs[querySnapshot.docs.length-1];
 			console.log(lastNews.data().title);
 			next = db.collection(this.state.data).orderBy("date", "desc").startAfter(lastNews).limit(12)*/
 			this.setState({ totalPage: Math.ceil(querySnapshot.docs.length/12) });	//calculate total Page nember
 			
-			for(let i=0;i<12;i++){
-				let doc = querySnapshot.docs[i];
-				/*this.setState(state => {
-    				//不能用push https://www.robinwieruch.de/react-state-array-add-update-remove
-    				const testArr = this.state.testArr.concat({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date, 'data_src': doc.data().data_src});
-    				return {testArr};
-    			})*/
-    			this.props.addNews({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date, 'data_src': doc.data().data_src})
+			let page = 3;
+			let nineNews = [];
+			for(let i=0;i<page;i++){
+				for(let j=0;j<9;j++){
+					let doc = querySnapshot.docs[i*9+j];
+					nineNews.push({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date, 'data_src': doc.data().data_src});
+    				
+    			}
+    			this.props.addNews(nineNews)
+    			nineNews = [];
 			}
+			this.lastLoadedNews = querySnapshot.docs[page*9-1];
+			console.log('this.lastLoadedNews',this.lastLoadedNews.data())
 
     	})
     }
@@ -109,43 +90,44 @@ class Projects extends Component{//prop 給collection名稱
     componentDidUpdate(prevProps){
     	if(this.props.newsList.length === 0 && prevProps.newsList.length > 0){	//change data_src_arr
     		db.collection(this.state.data).orderBy("date", "desc").where('data_src', 'in', this.props.data_src_arr).get().then((querySnapshot) => {	
-				for(let i=0;i<12;i++){
+				for(let i=0;i<9;i++){
 					let doc = querySnapshot.docs[i];
     				this.props.addNews({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date, 'data_src': doc.data().data_src})
 				}
     		})
     	}
+    	
+		//if(this.myRef.current !== null){console.log("Projects",this.myRef.current.offsetWidth);}//,offsetWidth
     }
+
+    
 
 
 	render(){
 		
-    	//if(this.state.testArr.length > 0){
     	if(this.props.newsList.length > 0){
 			return(
-				<div className='container'>
-					
-					<div className='Projects'>
-						{	
-							this.props.newsList.map((doc) => {				
-    							return(
-									<Project key={doc.id} cardId={doc.id} image={doc.image} title={doc.title} href={doc.href} date={doc.date} data_src={doc.data_src}/>
-    							)
-    						})	
-						}
-						
-					</div>
-				</div>
+				<div className='Projects' ref={this.myRef}>
+					{
+						this.props.newsList.map((nineNews)=>{
+							return(
+								<GridContainer nineNews={nineNews}/>
+							)
+						})
+					}
+				</div>	
 			)
 		}
 		else{
 			return( 
-				<div>
+				<div ref={this.myRef}>
 					<div>Loading</div>
 				</div>
 			)
 		}
+
 	}//end of render()
+
 }
 
 /*Projects.propTypes = {

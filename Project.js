@@ -25,7 +25,7 @@ class Projects extends Component{//prop 給collection名稱
 	}
 
 	componentDidMount(){
-		console.log("in componentDidMount")
+		//console.log("in componentDidMount")
 		
 		window.addEventListener('scroll', function(e) {
 			//https://stackoverflow.com/questions/2481350/how-to-get-scrollbar-position-with-javascript
@@ -82,7 +82,6 @@ class Projects extends Component{//prop 給collection名稱
     			nineNews = [];
 			}
 			this.lastLoadedNews = querySnapshot.docs[page*9-1];
-			console.log('this.lastLoadedNews',this.lastLoadedNews.data())
 
     	})
     }

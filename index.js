@@ -10,9 +10,7 @@ import Sidebar from './Sidebar'
 
 
 const store = createStore(rootReducer);
-console.log("hello my friend")
 
-//ReactDOM.render(<Navbar />,  document.getElementById('root'));
 ReactDOM.render(
 	<Provider store={store}>
 		<Navbar />

@@ -14,7 +14,7 @@ const store = createStore(rootReducer);
 ReactDOM.render(
 	<Provider store={store}>
 		<Navbar />
-		{/*}<Sidebar />{*/}
+		<Sidebar />
 		<GetNewsList />
 		
 	</Provider>, 

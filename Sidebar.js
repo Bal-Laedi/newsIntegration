@@ -53,12 +53,6 @@ class Sidebar extends Component{
 	
 	constructor(props){
 		super(props);
-
-		db.collection('data_source').get().then((querySnapshot) => {
-			querySnapshot.forEach((doc) => {
-				this.props.addDataSource({'id':doc.id , 'collection':doc.data().collection , 'name':doc.data().name, 'check': true});	
-   			})
-		})
 	}
 
 

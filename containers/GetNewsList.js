@@ -19,6 +19,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
 	addNews: news => dispatch(addNews(news)),
+	addDataSource: dataSrc => dispatch(addDataSource(dataSrc))
 })
 
 export default connect(

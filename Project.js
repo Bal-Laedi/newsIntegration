@@ -21,6 +21,12 @@ class Projects extends Component{
 		this.myRef = React.createRef();
 		this.loadedGridNum = 3;
 		this.lastLoadedNews = null;
+
+		db.collection('data_source').get().then((querySnapshot) => {
+			querySnapshot.forEach((doc) => {
+				this.props.addDataSource({'id':doc.id , 'collection':doc.data().collection , 'name':doc.data().name, 'check': true});	
+   			})
+		})
 	}
 
 	componentDidMount(){
@@ -36,7 +42,7 @@ class Projects extends Component{
 
 				if((atPage + 6) > this.loadedGridNum){
 					
-					db.collection(this.state.data).orderBy("date", "desc").startAfter(this.lastLoadedNews).limit(((atPage + 6) - this.loadedGridNum)*9)
+					db.collection(this.state.data).orderBy("date", "desc").startAfter(this.lastLoadedNews).where('data_src', 'in', this.props.data_src_arr).limit(((atPage + 6) - this.loadedGridNum)*9)
 					.get().then((querySnapshot) => {
 						let page = (atPage + 6) - this.loadedGridNum;
 						let nineNews = [];
@@ -56,13 +62,10 @@ class Projects extends Component{
 
 		}.bind(this))
 
-		
-		db.collection(this.state.data).orderBy("date", "desc").get().then((querySnapshot) => {
-			
-			this.setState({ totalPage: Math.ceil(querySnapshot.docs.length/12) });	//calculate total Page nember
-			
-			let page = 3;
-			let nineNews = [];
+		let page = 3;
+		let nineNews = [];
+		db.collection(this.state.data).orderBy("date", "desc").limit(page*9).get().then((querySnapshot) => {
+
 			for(let i=0;i<page;i++){
 				for(let j=0;j<9;j++){
 					let doc = querySnapshot.docs[i*9+j];
@@ -73,17 +76,28 @@ class Projects extends Component{
     			nineNews = [];
 			}
 			this.lastLoadedNews = querySnapshot.docs[page*9-1];
-
+			this.loadedGridNum = 3;
     	})
     }
 
     componentDidUpdate(prevProps){
+
     	if(this.props.newsList.length === 0 && prevProps.newsList.length > 0){	//change data_src_arr
-    		db.collection(this.state.data).orderBy("date", "desc").where('data_src', 'in', this.props.data_src_arr).get().then((querySnapshot) => {	
-				for(let i=0;i<9;i++){
-					let doc = querySnapshot.docs[i];
-    				this.props.addNews({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date, 'data_src': doc.data().data_src})
+    		let page = 3;
+			let nineNews = [];
+
+    		db.collection(this.state.data).orderBy("date", "desc").where('data_src', 'in', this.props.data_src_arr).limit(page*9).get().then((querySnapshot) => {	
+				for(let i=0;i<page;i++){
+					for(let j=0;j<9;j++){
+						let doc = querySnapshot.docs[i*9+j];
+						nineNews.push({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date, 'data_src': doc.data().data_src});
+    				
+    				}
+    				this.props.addNews(nineNews)
+    				nineNews = [];
 				}
+				this.lastLoadedNews = querySnapshot.docs[page*9-1];
+				this.loadedGridNum = 3;
     		})
     	}
     }

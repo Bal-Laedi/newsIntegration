@@ -1,8 +1,10 @@
 import React,{ Component } from 'react';
-import db from './initial_firebase';
+import db,{storageRef} from './initial_firebase';
 import Pagination from './Pagination';
 import GridContainer from './GridContainer';
 import './Project.css';
+const fetch = require('node-fetch');
+
 
 
 
@@ -20,12 +22,17 @@ class Projects extends Component{
 		this.state = {data: "all_news",page: 1, totalPage: 1};
 		this.myRef = React.createRef();
 		this.loadedGridNum = 3;
-		this.lastLoadedNews = null;
-
-		db.collection('data_source').get().then((querySnapshot) => {
-			querySnapshot.forEach((doc) => {
-				this.props.addDataSource({'id':doc.id , 'collection':doc.data().collection , 'name':doc.data().name, 'check': true});	
-   			})
+		this.lastLoadedNews = 0;
+		this.newsDataURL = 'https://storage.googleapis.com/newsintegration.appspot.com/news.json';
+		
+		storageRef.getDownloadURL().then( url => {
+			fetch(url)
+			.then(res => res.json())
+			.then(json => {
+				json.data_source.forEach((doc) => {
+					this.props.addDataSource({'id':doc.id , 'collection':doc.collection , 'name':doc.name, 'check': true});
+				})
+			})
 		})
 	}
 
@@ -41,64 +48,86 @@ class Projects extends Component{
 				let atPage = Math.ceil(Projects_scrollx/nineGridWidth);
 
 				if((atPage + 6) > this.loadedGridNum){
-					
-					db.collection(this.state.data).orderBy("date", "desc").startAfter(this.lastLoadedNews).where('data_src', 'in', this.props.data_src_arr).limit(((atPage + 6) - this.loadedGridNum)*9)
-					.get().then((querySnapshot) => {
-						let page = (atPage + 6) - this.loadedGridNum;
-						let nineNews = [];
-						for(let i=0;i<page;i++){
-							for(let j=0;j<9;j++){
-								let doc = querySnapshot.docs[i*9+j];
-								nineNews.push({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date, 'data_src': doc.data().data_src});
-    						}
-    						this.props.addNews(nineNews);
-    						nineNews = [];
-						}
-						this.lastLoadedNews = querySnapshot.docs[querySnapshot.docs.length-1];
-						this.loadedGridNum = atPage + 6;
+
+					storageRef.getDownloadURL().then( url => {
+						fetch(url)
+						.then(res => res.json())
+						.then(json => {
+							let nowIndex = this.lastLoadedNews + 1;
+							let nineNews = [];
+							let addNewsNum = 0;
+							
+							while(addNewsNum < (atPage + 6 - this.loadedGridNum)*9){
+								let doc = json.all_news_rss[nowIndex];
+								if(this.props.data_src_arr.includes(doc.data_src)){
+									nineNews.push({'id':doc.id ,'href':doc.href,'image':doc.image,'title':doc.title, 'date':doc.date, 'data_src': doc.data_src});
+									addNewsNum = addNewsNum + 1;
+									if(nineNews.length === 9){
+										this.props.addNews(nineNews);
+    									nineNews = [];
+									}
+								}
+								nowIndex = nowIndex + 1;	
+							}
+							this.lastLoadedNews = nowIndex - 1;
+							this.loadedGridNum = atPage + 6;
+						})
 					})
 				}
 			}
 
 		}.bind(this))
 
-		let page = 3;
-		let nineNews = [];
-		db.collection(this.state.data).orderBy("date", "desc").limit(page*9).get().then((querySnapshot) => {
 
-			for(let i=0;i<page;i++){
-				for(let j=0;j<9;j++){
-					let doc = querySnapshot.docs[i*9+j];
-					nineNews.push({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date, 'data_src': doc.data().data_src});
-    				
-    			}
-    			this.props.addNews(nineNews)
-    			nineNews = [];
-			}
-			this.lastLoadedNews = querySnapshot.docs[page*9-1];
-			this.loadedGridNum = 3;
-    	})
+    	storageRef.getDownloadURL().then( url => {
+			fetch(url)
+			.then(res => res.json())
+			.then(json => {
+				let page = 3;
+				let nineNews = [];
+				for(let i = 0; i < page; i++){
+					for(let j=0;j<9;j++){
+						let doc = json.all_news_rss[i*9+j];
+						nineNews.push({'id':doc.id ,'href':doc.href,'image':doc.image,'title':doc.title, 'date':doc.date, 'data_src': doc.data_src});
+    				}
+    				this.props.addNews(nineNews);
+    				nineNews = [];
+				}
+				this.lastLoadedNews = page*9-1;
+				this.loadedGridNum = 3;
+			})
+		})
     }
 
     componentDidUpdate(prevProps){
 
     	if(this.props.newsList.length === 0 && prevProps.newsList.length > 0){	//change data_src_arr
-    		let page = 3;
-			let nineNews = [];
 
-    		db.collection(this.state.data).orderBy("date", "desc").where('data_src', 'in', this.props.data_src_arr).limit(page*9).get().then((querySnapshot) => {	
-				for(let i=0;i<page;i++){
-					for(let j=0;j<9;j++){
-						let doc = querySnapshot.docs[i*9+j];
-						nineNews.push({'id':doc.id ,'href':doc.data().href,'image':doc.data().image,'title':doc.data().title, 'date':doc.data().date, 'data_src': doc.data().data_src});
-    				
-    				}
-    				this.props.addNews(nineNews)
-    				nineNews = [];
-				}
-				this.lastLoadedNews = querySnapshot.docs[page*9-1];
-				this.loadedGridNum = 3;
-    		})
+    		storageRef.getDownloadURL().then( url => {
+    			fetch(url)
+				.then(res => res.json())
+				.then(json => {
+					let nowIndex = this.lastLoadedNews + 1;
+					let nineNews = [];
+				    let addNewsNum = 0;
+				    let page = 3;
+					
+					while(addNewsNum < page*9){
+						let doc = json.all_news_rss[nowIndex];
+						if(this.props.data_src_arr.includes(doc.data_src)){
+							nineNews.push({'id':doc.id ,'href':doc.href,'image':doc.image,'title':doc.title, 'date':doc.date, 'data_src': doc.data_src});
+							addNewsNum = addNewsNum + 1;
+							if(nineNews.length === 9){
+								this.props.addNews(nineNews);
+    							nineNews = [];
+							}
+						}
+						nowIndex = nowIndex + 1;	
+					}
+					this.lastLoadedNews = page*9-1;
+					this.loadedGridNum = 3;
+				})
+			})
     	}
     }
 

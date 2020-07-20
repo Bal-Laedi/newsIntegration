@@ -17,14 +17,8 @@ var firebaseConfig = {
  };
  // Initialize Firebase
  firebase.initializeApp(firebaseConfig);
- //firebase.analytics();
-
-/*firebase.initializeApp({
-  apiKey: 'AIzaSyA3a7JPso-jCL06Eepb3D4sTWpM2nMqfRQ',
-  authDomain: 'newsintegration.firebaseapp.com',
-  projectId: 'newsintegration'
-});*/
 
 var db = firebase.firestore();
+export var storageRef = firebase.storage().ref('news.json');
 
 export default db;

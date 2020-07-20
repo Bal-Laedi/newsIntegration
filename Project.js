@@ -107,6 +107,7 @@ class Projects extends Component{
     			fetch(url)
 				.then(res => res.json())
 				.then(json => {
+					this.lastLoadedNews = -1;
 					let nowIndex = this.lastLoadedNews + 1;
 					let nineNews = [];
 				    let addNewsNum = 0;
@@ -124,7 +125,7 @@ class Projects extends Component{
 						}
 						nowIndex = nowIndex + 1;	
 					}
-					this.lastLoadedNews = page*9-1;
+					this.lastLoadedNews = nowIndex - 1;
 					this.loadedGridNum = 3;
 				})
 			})

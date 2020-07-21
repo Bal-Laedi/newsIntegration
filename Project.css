@@ -52,7 +52,7 @@
 .Project div{
 	color: white;
 	padding: 10px;
-	/*background-color: #fff;*/
+	font-family: 'Noto Sans TC', sans-serif;
 }
 
 .Project button{
@@ -60,7 +60,6 @@
 	background-color: rgba(0,0,0,0);
 	border-style: none;
 	font-size: 18px;
-	/*margin: 10px;*/
 }
 
 .Project button:hover{

@@ -60,7 +60,7 @@ class Projects extends Component{
 							while(addNewsNum < (atPage + 6 - this.loadedGridNum)*9){
 								let doc = json.all_news_rss[nowIndex];
 								if(this.props.data_src_arr.includes(doc.data_src)){
-									nineNews.push({'id':doc.id ,'href':doc.href,'image':doc.image,'title':doc.title, 'date':doc.date, 'data_src': doc.data_src});
+									nineNews.push({'id':doc.id ,'href':doc.href,'image': doc.image,'title': doc.title, 'date': doc.date, 'data_src': doc.data_src, 'description': doc.description});
 									addNewsNum = addNewsNum + 1;
 									if(nineNews.length === 9){
 										this.props.addNews(nineNews);
@@ -88,7 +88,7 @@ class Projects extends Component{
 				for(let i = 0; i < page; i++){
 					for(let j=0;j<9;j++){
 						let doc = json.all_news_rss[i*9+j];
-						nineNews.push({'id':doc.id ,'href':doc.href,'image':doc.image,'title':doc.title, 'date':doc.date, 'data_src': doc.data_src});
+						nineNews.push({'id':doc.id ,'href': doc.href,'image': doc.image,'title': doc.title, 'date': doc.date, 'data_src': doc.data_src, 'description': doc.description});
     				}
     				this.props.addNews(nineNews);
     				nineNews = [];
@@ -116,7 +116,7 @@ class Projects extends Component{
 					while(addNewsNum < page*9){
 						let doc = json.all_news_rss[nowIndex];
 						if(this.props.data_src_arr.includes(doc.data_src)){
-							nineNews.push({'id':doc.id ,'href':doc.href,'image':doc.image,'title':doc.title, 'date':doc.date, 'data_src': doc.data_src});
+							nineNews.push({'id':doc.id ,'href':doc.href,'image': doc.image,'title': doc.title, 'date': doc.date, 'data_src': doc.data_src, 'description': doc.description});
 							addNewsNum = addNewsNum + 1;
 							if(nineNews.length === 9){
 								this.props.addNews(nineNews);

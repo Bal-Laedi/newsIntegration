@@ -13,11 +13,6 @@
 	
 }
 
-.Navbar > div{
-	/*position: absolute;
-	right: 10%;*/
-}
-
 .nav-item{
 	writing-mode: vertical-lr;
 	font-size: 20px; 
@@ -25,4 +20,8 @@
  	width: 100%;
  	text-align: center;
  	padding: 0 20%; 
+}
+
+.nav-title{
+	font-weight: 900;
 }

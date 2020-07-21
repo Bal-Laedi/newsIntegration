@@ -10,7 +10,7 @@ class Navbar extends Component{
 		return(
 			<span className="Navbar">
 					<div className="nav-item" uk-toggle="target: #offcanvas-overlay">icon</div>
-					<div className="nav-item" >NewsIntegration</div>
+					<div className="nav-item nav-title" >NewsIntegration</div>
 					<div className="nav-item" >Wilson</div>
 					<div className="nav-item">Partical</div>
 			</span>

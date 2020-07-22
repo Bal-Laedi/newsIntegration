@@ -1,6 +1,6 @@
 .Navbar{
 	position: fixed;
-	z-index: 20;
+	z-index: 1;
 	display: inline-grid;
 	grid-template-rows: 2fr 4fr 1fr 1fr;
 	height: 100vh;

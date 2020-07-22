@@ -56,14 +56,14 @@ class Project extends Component{
 		return(
 			<div className = 'Project' style = {{ backgroundImage: "url(" + this.props.image + ")" }}>
 				<a className = 'mask' href = {this.props.href} target = "_blank">
-					<div className = "Project-title"><strong>{this.props.title}</strong></div>
-					<div className = "Project-description">{this.props.description}</div>
+				<div className = "Project-title"><strong>{this.props.title}</strong></div>
+				<div className = "Project-description">{this.props.description}</div>
+				</a>
 					{/*}<div>{this.props.data_src}</div>
 					<div>
 						{likeButton}
 						<button><a href={this.props.href}><img src="https://img.icons8.com/ios-glyphs/30/000000/read.png"/></a></button>
 					</div>{*/}
-				</a>
 			</div>
 		);
 	}

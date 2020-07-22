@@ -34,7 +34,7 @@
     grid-template-rows: [first]1fr[src]4fr[image]1.5fr[title]1fr[btn];
 	width: 100%;
 	height: 100%;
-	background-color: rgba(0,0,0,0.3);
+	background-color: rgba(0,0,0,0.65);
 	text-decoration-color: white; 
 }
 

@@ -56,8 +56,10 @@ class Project extends Component{
 		return(
 			<div className = 'Project' style = {{ backgroundImage: "url(" + this.props.image + ")" }}>
 				<a className = 'mask' href = {this.props.href} target = "_blank">
-				<div className = "Project-title"><strong>{this.props.title}</strong></div>
-				<div className = "Project-description">{this.props.description}</div>
+				<div className = "news-content Project-title"><strong>{this.props.title}</strong></div>
+				<div className = "description-parent">
+					<div className = "news-content Project-description">{this.props.description}</div>
+				</div>
 				</a>
 					{/*}<div>{this.props.data_src}</div>
 					<div>

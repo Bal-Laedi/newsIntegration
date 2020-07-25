@@ -1,5 +1,7 @@
 .uk-offcanvas-bar{
 	width: 100vw;
+	left: -100vw;
+	transition: left .65s ease-in-out;
 	padding: 0;
 	background: linear-gradient(125deg, #500024, #36001B);
 	color: white;

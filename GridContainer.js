@@ -61,11 +61,6 @@ class Project extends Component{
 					<div className = "news-content Project-description">{this.props.description}</div>
 				</div>
 				</a>
-					{/*}<div>{this.props.data_src}</div>
-					<div>
-						{likeButton}
-						<button><a href={this.props.href}><img src="https://img.icons8.com/ios-glyphs/30/000000/read.png"/></a></button>
-					</div>{*/}
 			</div>
 		);
 	}

@@ -11,7 +11,8 @@ const newsList = (state = [], action) => {
 							'image': doc.image,
 							'title': doc.title,
 							'date': doc.date,
-							'data_src': doc.data_src
+							'data_src': doc.data_src,
+							'description': doc.description
 						}
 					)
 						

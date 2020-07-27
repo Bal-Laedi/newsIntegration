@@ -56,12 +56,10 @@ class Project extends Component{
 		return(
 			<div className = 'Project' style = {{ backgroundImage: "url(" + this.props.image + ")" }}>
 				<a className = 'mask' href = {this.props.href} target = "_blank">
-					<div><strong>{this.props.title}</strong></div>
-					<div>{this.props.data_src}</div>
-					{/*}<div>
-						{likeButton}
-						<button><a href={this.props.href}><img src="https://img.icons8.com/ios-glyphs/30/000000/read.png"/></a></button>
-					</div>{*/}
+				<div className = "news-content Project-title"><strong>{this.props.title}</strong></div>
+				<div className = "description-parent">
+					<div className = "news-content Project-description">{this.props.description}</div>
+				</div>
 				</a>
 			</div>
 		);
@@ -82,7 +80,7 @@ class GridContainer extends Component{
 				this.props.nineNews.map((doc) => {
 
     				return(
-						<Project key={doc.id} cardId={doc.id} image={doc.image} title={doc.title} href={doc.href} date={doc.date} data_src={doc.data_src}/>
+						<Project key={doc.id} cardId={doc.id} image={doc.image} title={doc.title} href={doc.href} date={doc.date} data_src={doc.data_src} description={doc.description}/>
     				)
  				})
  			}
@@ -90,14 +88,5 @@ class GridContainer extends Component{
 		)
 	}
 }
-
-
-/*
-this.props.newsList.map((doc) => {				
-    	return(
-			<Project key={doc.id} cardId={doc.id} image={doc.image} title={doc.title} href={doc.href} date={doc.date} data_src={doc.data_src}/>
-    	)
- })
- */
 
  export default GridContainer;

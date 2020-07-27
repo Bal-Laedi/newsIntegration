@@ -20,3 +20,9 @@ ReactDOM.render(
 	</Provider>, 
 	document.getElementById('root')
 );
+
+document.getElementById("root").addEventListener("wheel", event =>{
+	let positionX = window.scrollX + event.deltaY;
+	window.scrollTo(positionX, 0);
+
+})

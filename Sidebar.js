@@ -9,12 +9,19 @@ class Sidebar_item extends Component{
 		super(props);
 		this.state = {hover: false}
 		this.toggleHover = this.toggleHover.bind(this);
+		this.toggleCheck = this.toggleCheck.bind(this);
 	}
 
 	toggleHover(){
 		this.setState({
 			hover: !this.state.hover
 		})
+	}
+
+	toggleCheck(){
+		if((this.props.data_src_arr.length > 1) || (this.props.check === false)){
+			this.props.toggleNewSource();
+		}
 	}
 
 	render(){
@@ -58,7 +65,7 @@ class Sidebar_item extends Component{
        	}
 
 		return(
-			<div className="Sidebar_item" collection={this.props.collection} onClick={this.props.toggleNewSource} onMouseEnter={this.toggleHover} onMouseLeave={this.toggleHover} style = {{ color : fontColor}}>
+			<div className="Sidebar_item" collection={this.props.collection} onClick={this.toggleCheck} onMouseEnter={this.toggleHover} onMouseLeave={this.toggleHover} style = {{ color : fontColor}}>
         		{chooseMark}
         		<div>{this.props.data_source}</div>
         	</div>
@@ -68,7 +75,9 @@ class Sidebar_item extends Component{
 
 const mapStateToProps = (state, ownProps) => ({
 	//ownProps.key always undefined(don't know why) 
-	check: state.dataSrcFilter.filter(dataSrc => dataSrc.id === ownProps.id)[0].check
+	check: state.dataSrcFilter.filter(dataSrc => dataSrc.id === ownProps.id)[0].check,
+	data_src_arr: state.dataSrcFilter.filter(dataSrc => dataSrc.check === true)
+									 .map(obj => obj.collection)
 })
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

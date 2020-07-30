@@ -5,7 +5,7 @@ body{
 	background-color: #f0f0f0;
 }
 
-@media (max-width: 641px){
+@media (max-width: 641px), (max-device-width:641px){
 	body{
 		overflow-y: unset;
 	}

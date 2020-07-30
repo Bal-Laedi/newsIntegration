@@ -30,7 +30,7 @@
 	font-weight: 900;
 }
 
-@media (max-width: 641px){
+@media (max-width: 641px), (max-device-width:641px){
 
 	.Navbar{
 		display: grid;

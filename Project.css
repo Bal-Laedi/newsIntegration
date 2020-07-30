@@ -23,6 +23,7 @@
 	background-position: center center;
     overflow: hidden;
     white-space: normal;
+    user-select: none;
 }
 
 .mask{

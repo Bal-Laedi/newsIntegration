@@ -31,7 +31,7 @@ class Sidebar_item extends Component{
 			if(!this.state.hover){
         		chooseMark = 
         			<svg className="svg-icon"  viewBox="0 0 20 20" style = {{ fill : "#DBA513" }}>						
-						<line x1="8" y1="0" x2="8" y2="20"/>
+						<line x1="10" y1="0" x2="10" y2="20"/>
 					</svg>
 				fontColor = "#DBA513";
 			}

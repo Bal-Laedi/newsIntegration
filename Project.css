@@ -77,7 +77,7 @@
 	bottom: 0px;
 }
 
-@media (max-width: 641px){
+@media (max-width: 641px), (max-device-width:641px){
 	.Projects{
 		left: 0px;
 		top: 43px;

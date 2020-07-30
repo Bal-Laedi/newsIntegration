@@ -1,5 +1,4 @@
 
-
 .Projects{
 	position: relative;
 	left: 53px;
@@ -15,7 +14,7 @@
 	grid-template-columns: 1fr 1fr 1fr;
 	grid-template-rows: 1fr 1fr 1fr;
 	overflow: hidden;
-	min-height: 600px;
+	
 }
 
 
@@ -68,10 +67,37 @@
 	position: relative;
 }
 
-.Project .Project-description{
+.Project-description{
 	font-size: 2vh;
 	font-weight: 100;
 	-webkit-line-clamp: 4;
 	position: absolute;
 	bottom: 0px;
+}
+
+@media (max-width: 641px){
+	.Projects{
+		left: 0px;
+		top: 43px;
+	}
+
+	.GridContainer{
+		height: auto;
+		display: block;
+		width: 100%;
+	}
+
+	.Project{
+		height:230px;
+	}
+
+	.mask{
+		height: 100%;
+		padding: 20px;
+	}
+
+	.Project-title{
+		font-size: 2.75vh;
+	}
+
 }

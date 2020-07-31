@@ -40,12 +40,21 @@ class Projects extends Component{
 		
 		window.addEventListener('scroll', function(e) {
 			//https://stackoverflow.com/questions/2481350/how-to-get-scrollbar-position-with-javascript
-			let Projects_scrollx;
-			if(this.myRef.current !== undefined){
+			let Projects_scroll, atPage;
+			let mobile_viewport = window.matchMedia("(max-width: 641px)");
 			
-				Projects_scrollx = window.scrollX - this.myRef.current.offsetLeft;
-				let nineGridWidth = this.myRef.current.childNodes[0].offsetWidth;
-				let atPage = Math.ceil(Projects_scrollx/nineGridWidth);
+			if(this.myRef.current !== undefined){
+				
+				if(mobile_viewport.matches){
+					Projects_scroll = window.scrollY - this.myRef.current.offsetTop;
+					let nineGridHeight = this.myRef.current.childNodes[0].offsetHeight;
+					atPage = Math.ceil(Projects_scroll/nineGridHeight);
+				}
+				else{
+					Projects_scroll = window.scrollX - this.myRef.current.offsetLeft;
+					let nineGridWidth = this.myRef.current.childNodes[0].offsetWidth;
+					atPage = Math.ceil(Projects_scroll/nineGridWidth);
+				}
 
 				if((atPage + 6) > this.loadedGridNum){
 

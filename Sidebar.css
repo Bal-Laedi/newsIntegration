@@ -38,3 +38,19 @@
 	stroke-width: 1.5px;
 	stroke: #DBA513;
 }
+
+@media (max-width: 641px), (max-device-width:641px){
+	.uk-offcanvas-bar{
+		writing-mode: horizontal-tb;
+	}
+	.Sidebar-title{
+		height: auto;
+		font-size: 6vh;
+		margin:32px;
+	}
+
+	.Sidebar_item{
+		padding: 0 10%;
+		font-size: 2rem;
+	}
+}

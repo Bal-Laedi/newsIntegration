@@ -21,8 +21,10 @@ ReactDOM.render(
 	document.getElementById('root')
 );
 
-/*document.getElementById("root").addEventListener("wheel", event =>{
-	let positionX = window.scrollX + event.deltaY;
-	window.scrollTo(positionX, 0);
-
-})*/
+document.getElementById("root").addEventListener("wheel", event =>{
+	let mobile_viewport = window.matchMedia("(max-width: 641px)");
+	if(!mobile_viewport.matches){
+		let positionX = window.scrollX + event.deltaY;
+		window.scrollTo(positionX, 0);
+	}
+})

@@ -24,6 +24,7 @@
 .hamburger-menu{
 	width: 36px;
 	height: 36px;
+	cursor: pointer;
 }
 
 .nav-title{

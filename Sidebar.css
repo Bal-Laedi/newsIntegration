@@ -8,6 +8,10 @@
 	writing-mode: vertical-rl;
 }
 
+.uk-offcanvas-close > svg{
+	width: 29px;
+}
+
 .Sidebar-title{
 	height: 100%;
 	text-align: center;

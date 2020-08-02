@@ -48,7 +48,7 @@
 		writing-mode: horizontal-tb;
 	}
 
-	.nav-item:nth-child(2), .nav-item:nth-child(5){
+	.nav-item:nth-child(2), .nav-item:nth-child(4), .nav-item:nth-child(5){
 		display: none;
 	}
 

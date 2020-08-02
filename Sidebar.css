@@ -1,3 +1,7 @@
+.uk-offcanvas{
+	z-index:1;
+}
+
 .uk-offcanvas-bar{
 	width: 100vw;
 	left: -100vw;
@@ -45,9 +49,14 @@
 }
 
 @media (max-width: 641px), (max-device-width:641px){
+	.uk-offcanvas{
+		z-index:2;
+	}
+
 	.uk-offcanvas-bar{
 		writing-mode: horizontal-tb;
 	}
+
 	.Sidebar-title{
 		height: auto;
 		font-size: 6vh;

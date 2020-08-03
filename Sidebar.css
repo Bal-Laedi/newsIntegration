@@ -48,6 +48,10 @@
 	stroke: #DBA513;
 }
 
+.mobile-line{
+	display: none;
+}
+
 @media (max-width: 641px), (max-device-width:641px){
 	.uk-offcanvas{
 		z-index:2;
@@ -67,4 +71,15 @@
 		padding: 0 10%;
 		font-size: 2rem;
 	}
+
+	.svg-icon{
+		margin-bottom: 0px;
+		margin-right: 10px; 
+		display: none;
+	}
+
+	.mobile-line{
+		display: inline-block;
+	}
+
 }

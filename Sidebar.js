@@ -26,6 +26,9 @@ class Sidebar_item extends Component{
 
 	render(){
 		let chooseMark;
+		let mobile_chooseMark;
+
+
 		let fontColor;
 		let mobile_viewport = window.matchMedia("(max-width: 641px)");
 		if(this.props.check){
@@ -33,6 +36,11 @@ class Sidebar_item extends Component{
         		chooseMark = 
         			<svg className="svg-icon" onClick={this.toggleCheck} onMouseEnter={this.toggleHover} onMouseLeave={this.toggleHover} viewBox="0 0 20 20" style = {{ fill : "#DBA513" }}>						
 						<line x1="10" y1="0" x2="10" y2="20"/>
+					</svg>
+
+				mobile_chooseMark = 
+					<svg className="svg-icon mobile-line" viewBox="0 0 20 20"  style = {{ fill : "#DBA513" }}>						
+						<line x1="0" y1="10" x2="20" y2="10"/>
 					</svg>
 				fontColor = "#DBA513";
 			}
@@ -48,6 +56,10 @@ class Sidebar_item extends Component{
         	if(!this.state.hover || mobile_viewport.matches){
         		chooseMark = 
         			<svg className="svg-icon" onClick={this.toggleCheck} onMouseEnter={this.toggleHover} onMouseLeave={this.toggleHover} width="0" height="0" viewBox="0 0 20 20">							
+					</svg>
+
+				mobile_chooseMark = 
+					<svg className="svg-icon mobile-line" viewBox="0 0 20 20"  style = {{ fill : "#DBA513" }}>						
 					</svg>
 				fontColor = "#FFF";
 			}
@@ -65,6 +77,7 @@ class Sidebar_item extends Component{
 		return(
 			<div className="Sidebar_item" collection={this.props.collection} >
         		{chooseMark}
+        		{mobile_chooseMark}
         		<div className="news-source" onClick={this.toggleCheck} onMouseEnter={this.toggleHover} onMouseLeave={this.toggleHover} style={{ color: fontColor}}>
         			{this.props.data_source}
         		</div>

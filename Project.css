@@ -35,10 +35,13 @@
 	background-color: rgba(0,0,0,0.65);
 	padding: 40px;
 	box-sizing: border-box;
+	transition: background-color 1s ease-in-out;
 }
 
 .mask:hover{
 	text-decoration: none;
+	background-color: rgba(80, 0, 36, 0.65);
+	transition: background-color 0.35s ease-in-out;
 }
 
 @media (max-height: 870px){

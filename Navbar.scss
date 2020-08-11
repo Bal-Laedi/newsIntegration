@@ -43,6 +43,10 @@
 		height: 50px;
 		line-height: 0; 
 
+		.nav-icon{
+			line-height: 0;
+		}
+
 		.nav-item{
 			writing-mode: horizontal-tb;
 			width: unset;

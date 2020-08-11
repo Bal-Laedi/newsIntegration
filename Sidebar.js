@@ -2,7 +2,7 @@ import React,{ Component } from 'react';
 import db from './initial_firebase';
 import { connect } from 'react-redux';
 import { toggleNewSource, addDataSource, emptyNews} from './actions/action';
-import './Sidebar.css';
+import './Sidebar.scss';
 
 class Sidebar_item extends Component{
 	constructor(props){

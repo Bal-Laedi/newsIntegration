@@ -75,7 +75,7 @@ class Sidebar_item extends Component{
         
 
 		return(
-			<div className="Sidebar_item" collection={this.props.collection} >
+			<div className="Sidebar-item" collection={this.props.collection} >
         		{chooseMark}
         		{mobile_chooseMark}
         		<div className="news-source" onClick={this.toggleCheck} onMouseEnter={this.toggleHover} onMouseLeave={this.toggleHover} style={{ color: fontColor}}>

@@ -1,0 +1,22 @@
+body{
+	margin: 0px;
+	height: 100vh;
+	overflow-y: hidden;
+	background-color: #f0f0f0;
+}
+
+@media (max-width: 641px), (max-device-width:641px){
+	body{
+		overflow-y: unset;
+	}
+}
+
+body::-webkit-scrollbar {
+   	display: none;
+}
+
+#root{
+	margin: 0px;
+	white-space: nowrap;
+	font-family: 'Playfair Display SC', serif;
+}

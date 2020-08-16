@@ -1,0 +1,108 @@
+
+.Projects{
+	position: relative;
+	left: 53px;
+	display: inline-block;
+	vertical-align:top;
+}
+
+
+.GridContainer{
+	height: 100vh;
+	display: inline-grid;
+	width: 100vh;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-rows: 1fr 1fr 1fr;
+	overflow: hidden;
+	
+}
+
+
+.Project{
+	font-size: 2.75vh;
+	background-size: cover;
+	background-repeat:no-repeat;
+	background-position: center center;
+    overflow: hidden;
+    white-space: normal;
+    user-select: none;
+}
+
+.mask{
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	background-color: rgba(0,0,0,0.65);
+	padding: 40px;
+	box-sizing: border-box;
+	transition: background-color 1s ease-in-out;
+}
+
+.mask:hover{
+	text-decoration: none;
+	background-color: rgba(80, 0, 36, 0.65);
+	transition: background-color 0.35s ease-in-out;
+}
+
+@media (max-height: 870px){
+	.mask{
+		padding: 30px;
+	}
+}
+
+.news-content{
+	width: 100%;
+	color: white;
+	font-family: 'Noto Sans TC', sans-serif;
+	overflow:hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	white-space: normal;
+}
+
+.Project-title{
+	font-size: 2.5vh;
+	-webkit-line-clamp: 3;
+}
+
+.description-parent{
+	flex-grow: 1;
+	position: relative;
+}
+
+.Project-description{
+	font-size: 2vh;
+	font-weight: 100;
+	-webkit-line-clamp: 4;
+	position: absolute;
+	bottom: 0px;
+}
+
+@media (max-width: 641px), (max-device-width:641px){
+	.Projects{
+		left: 0px;
+		top: 43px;
+	}
+
+	.GridContainer{
+		height: auto;
+		display: block;
+		width: 100%;
+	}
+
+	.Project{
+		height:230px;
+	}
+
+	.mask{
+		height: 100%;
+		padding: 20px;
+	}
+
+	.Project-title{
+		font-size: 2.75vh;
+	}
+
+}

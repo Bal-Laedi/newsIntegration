@@ -68,6 +68,12 @@
 	}
 }
 
+@media (max-height: 870px){
+	.Projects .GridContainer .Project .mask{
+		padding: 30px;
+	}
+}
+
 
 @media (max-width: 641px), (max-device-width:641px){
 	.Projects{

@@ -1,8 +1,7 @@
 import React,{ Component } from 'react';
 import db,{storageRef} from './initial_firebase';
-import Pagination from './Pagination';
 import GridContainer from './GridContainer';
-import './Project.css';
+import './Project.scss';
 const fetch = require('node-fetch');
 
 

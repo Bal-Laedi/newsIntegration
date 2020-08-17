@@ -1,0 +1,6 @@
+node_modules/
+.cache/
+.firebase/
+dist/
+containers/.DS_Store
+.DS_Store

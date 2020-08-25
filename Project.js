@@ -65,7 +65,7 @@ class Projects extends Component{
 							let nineNews = [];
 							let addNewsNum = 0;
 							
-							while(addNewsNum < (atPage + 6 - this.loadedGridNum)*9){
+							while(addNewsNum < (atPage + 6 - this.loadedGridNum)*9 && nowIndex < json.all_news_rss.length){
 								let doc = json.all_news_rss[nowIndex];
 								if(this.props.data_src_arr.includes(doc.data_src)){
 									nineNews.push({'id':doc.id ,'href':doc.href,'image': doc.image,'title': doc.title, 'date': doc.date, 'data_src': doc.data_src, 'description': doc.description});
@@ -78,7 +78,7 @@ class Projects extends Component{
 								nowIndex = nowIndex + 1;	
 							}
 							this.lastLoadedNews = nowIndex - 1;
-							this.loadedGridNum = atPage + 6;
+							this.loadedGridNum = atPage + Math.floor(addNewsNum/9);
 						})
 					})
 				}
@@ -121,7 +121,7 @@ class Projects extends Component{
 				    let addNewsNum = 0;
 				    let page = 3;
 					
-					while(addNewsNum < page*9){
+					while(addNewsNum < page*9 && nowIndex < json.all_news_rss.length){
 						let doc = json.all_news_rss[nowIndex];
 						if(this.props.data_src_arr.includes(doc.data_src)){
 							nineNews.push({'id':doc.id ,'href':doc.href,'image': doc.image,'title': doc.title, 'date': doc.date, 'data_src': doc.data_src, 'description': doc.description});
@@ -134,7 +134,7 @@ class Projects extends Component{
 						nowIndex = nowIndex + 1;	
 					}
 					this.lastLoadedNews = nowIndex - 1;
-					this.loadedGridNum = 3;
+					this.loadedGridNum = Math.floor(addNewsNum/9);
 				})
 			})
     	}

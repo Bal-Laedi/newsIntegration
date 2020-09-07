@@ -23,6 +23,7 @@ class Projects extends Component{
 		this.loadedGridNum = 3;
 		this.lastLoadedNews = 0;
 		this.newsDataURL = 'https://storage.googleapis.com/newsintegration.appspot.com/news.json';
+		this.newsNumPerGridContainer = 9;
 		
 		storageRef.getDownloadURL().then( url => {
 			fetch(url)
@@ -78,7 +79,7 @@ class Projects extends Component{
 								nowIndex = nowIndex + 1;	
 							}
 							this.lastLoadedNews = nowIndex - 1;
-							this.loadedGridNum = atPage + Math.floor(addNewsNum/9);
+							this.loadedGridNum = atPage + Math.floor(addNewsNum/this.newsNumPerGridContainer);
 						})
 					})
 				}
@@ -120,6 +121,7 @@ class Projects extends Component{
 					let nineNews = [];
 				    let addNewsNum = 0;
 				    let page = 3;
+				    
 					
 					while(addNewsNum < page*9 && nowIndex < json.all_news_rss.length){
 						let doc = json.all_news_rss[nowIndex];
@@ -134,7 +136,7 @@ class Projects extends Component{
 						nowIndex = nowIndex + 1;	
 					}
 					this.lastLoadedNews = nowIndex - 1;
-					this.loadedGridNum = Math.floor(addNewsNum/9);
+					this.loadedGridNum = Math.floor(addNewsNum/this.newsNumPerGridContainer);
 				})
 			})
     	}
